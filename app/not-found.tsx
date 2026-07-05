@@ -1,8 +1,6 @@
 import Link from "next/link"
 import { Compass } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-
 export default function NotFound() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
@@ -15,9 +13,12 @@ export default function NotFound() {
           The page you&rsquo;re looking for doesn&rsquo;t exist.
         </p>
       </div>
-      <Button variant="outline" size="sm" render={<Link href="/" />}>
+      <Link
+        href="/"
+        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-sm font-medium hover:bg-muted"
+      >
         Back to dashboard
-      </Button>
+      </Link>
     </div>
   )
 }

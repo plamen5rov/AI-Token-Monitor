@@ -38,5 +38,3 @@ export async function syncProviderAction(providerId: string): Promise<{ result: 
       : `Sync failed: ${result.error}`,
   }
 }
-
-export type { SyncResult }

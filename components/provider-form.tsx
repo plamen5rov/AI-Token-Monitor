@@ -136,6 +136,7 @@ export function ProviderForm({ templates }: { templates: TemplateInfo[] }) {
           <input
             id="provider-apikey"
             type="password"
+            autoComplete="off"
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             placeholder={selected?.apiKeyPrefix ?? "sk-..."}

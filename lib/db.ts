@@ -72,7 +72,13 @@ export function updateProvider(
 
 export function deleteProvider(id: string): boolean {
   const db = getDb()
-  const result = db.prepare("DELETE FROM providers WHERE id = ?").run(id)
+  const result = db.transaction(() => {
+    db.prepare("DELETE FROM usage_records WHERE provider_id = ?").run(id)
+    db.prepare("DELETE FROM usage_daily WHERE provider_id = ?").run(id)
+    db.prepare("DELETE FROM models WHERE provider_id = ?").run(id)
+    db.prepare("DELETE FROM sync_log WHERE provider_id = ?").run(id)
+    return db.prepare("DELETE FROM providers WHERE id = ?").run(id)
+  })()
   return result.changes > 0
 }
 

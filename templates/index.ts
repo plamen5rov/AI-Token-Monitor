@@ -15,13 +15,13 @@ export const PROVIDER_TEMPLATES: ProviderTemplate[] = [
   {
     type: "openai",
     displayName: "OpenAI",
-    description: "GPT models via the OpenAI API. Uses organization-wide usage endpoint.",
+    description: "GPT models via the OpenAI API. Usage endpoint requires an Admin API key (sk-admin-...), not a standard project key.",
     baseUrl: "https://api.openai.com/v1",
     authMethod: "bearer",
-    apiKeyPrefix: "sk-",
-    apiKeyLabel: "API Key",
-    apiKeyHelpUrl: "https://platform.openai.com/api-keys",
-    supportsModels: true,
+    apiKeyPrefix: "sk-admin-",
+    apiKeyLabel: "Admin API Key",
+    apiKeyHelpUrl: "https://platform.openai.com/settings/organization/admin-keys",
+    supportsModels: false,
     supportsUsage: true,
   },
   {

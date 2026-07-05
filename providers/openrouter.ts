@@ -75,6 +75,11 @@ export class OpenRouterProvider extends BaseProvider {
     })
 
     if (!res.ok) {
+      if (res.status === 403) {
+        throw new Error(
+          "OpenRouter activity request failed: 403 Forbidden. The /activity endpoint requires a Management API key, not a regular API key. Create one at https://openrouter.ai/keys (select 'Management' key type)."
+        )
+      }
       throw new Error(
         `OpenRouter activity request failed: ${res.status} ${res.statusText}`
       )
@@ -84,8 +89,11 @@ export class OpenRouterProvider extends BaseProvider {
     const records: NormalizedUsageRecord[] = []
 
     for (const item of data.data || []) {
-      // Use the date at end-of-day (23:59:59 UTC) as the timestamp
+      if (!item.date) continue
+
       const timestamp = new Date(item.date + "T23:59:59Z").getTime()
+      if (!Number.isFinite(timestamp)) continue
+
       const inputTokens = item.prompt_tokens || 0
       const outputTokens = (item.completion_tokens || 0) + (item.reasoning_tokens || 0)
 

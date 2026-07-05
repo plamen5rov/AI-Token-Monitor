@@ -11,6 +11,12 @@ import { encrypt } from "@/lib/crypto"
 import { healthCheckProvider, syncProvider, type SyncResult } from "@/lib/sync"
 import { getTemplate, PROVIDER_TEMPLATES } from "@/templates"
 
+function sanitizeApiKey(raw: string): string {
+  return raw
+    .replace(/[\u200B-\u200F\uFEFF\u00A0]/g, "")
+    .trim()
+}
+
 export type AddProviderResult = {
   success: boolean
   message: string
@@ -32,7 +38,7 @@ export async function addProviderAction(
     return { success: false, message: "Provider name is required." }
   }
 
-  const trimmedKey = apiKey.trim()
+  const trimmedKey = sanitizeApiKey(apiKey)
   if (!trimmedKey) {
     return { success: false, message: "API key is required." }
   }

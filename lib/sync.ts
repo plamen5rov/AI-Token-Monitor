@@ -84,6 +84,8 @@ async function syncUsage(adapter: BaseProvider, providerId: string): Promise<num
   let count = 0
 
   for (const record of records) {
+    if (!Number.isFinite(record.timestamp)) continue
+
     const model = getModelByName(providerId, record.modelId)
     if (!model) continue
 

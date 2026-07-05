@@ -96,9 +96,12 @@ npm run start
 
 | Provider | Key Type | Where to Get It |
 |----------|---------|----------------|
-| OpenAI | Standard API key (`sk-...`) | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
+| OpenAI | **Admin** API key (`sk-admin-...`) | [platform.openai.com/settings/organization/admin-keys](https://platform.openai.com/settings/organization/admin-keys) |
 | Anthropic | **Admin** API key (`sk-ant-admin01-...`) | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) |
 | OpenRouter | **Management** API key (`sk-or-...`) | [openrouter.ai/keys](https://openrouter.ai/keys) |
+
+> All three providers require admin/management keys — standard API keys
+> cannot access usage/billing endpoints and will return 403 Forbidden.
 
 > Anthropic requires an Admin API key (not a standard API key) to access the
 > Usage & Cost Admin API.
