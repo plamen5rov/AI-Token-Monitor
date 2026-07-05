@@ -24,6 +24,12 @@ Changelog for the AI Token Monitor (ATM) project.
 
 ---
 
+## Phase 3 — Provider Integration Framework
+
+- [2026-07-05] Implemented provider integration framework: AES-256-GCM API key encryption (`lib/crypto.ts`), `ProviderAdapter` interface and `BaseProvider` abstract class (`providers/base.ts`), OpenAI adapter with `/v1/models` and `/v1/organization/usage/completions` endpoints and hardcoded pricing map for common models (`providers/openai.ts`), adapter factory (`providers/index.ts`), sync log and `getModelByName` CRUD helpers added to `lib/db.ts`, sync engine orchestrating model upsert, usage record creation with cost computation, and sync_log lifecycle (`lib/sync.ts`); verified full sync flow with a mock provider adapter via `scripts/verify-providers.ts` — all assertions passed (models: gpt-4o, gpt-4o-mini; records: 2; total cost: $72.30; sync log status: success; provider.last_sync updated) (files modified: lib/db.ts, lib/crypto.ts, lib/sync.ts, providers/base.ts, providers/openai.ts, providers/index.ts, types/index.ts, scripts/verify-providers.ts, next-env.d.ts, DONE.md)
+
+---
+
 ## Process & Tooling
 
 - [2026-07-05] Created `ERROR-LOG.md` at project root and added error-logging principle to workflow rules; logged first entry about Dark Reader hydration mismatch; mirrored the principle into global OpenCode config at `~/.config/opencode/AGENTS.md` (files modified: ERROR-LOG.md, AGENTS.md, docs/agents/OPENODE_MASTER_PROMPT.md, docs/agents/OPENODE_BUILD_AGENT.md, ~/.config/opencode/AGENTS.md, DONE.md)

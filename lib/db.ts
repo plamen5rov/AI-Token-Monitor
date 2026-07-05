@@ -3,9 +3,11 @@ import type {
   Model,
   NewModel,
   NewProvider,
+  NewSyncLog,
   NewUsageRecord,
   Provider,
   Setting,
+  SyncLog,
   UsageRecord,
 } from "@/types"
 
@@ -107,6 +109,16 @@ export function getModelsByProviderId(providerId: string): Model[] {
     .all(providerId) as Model[]
 }
 
+export function getModelByName(
+  providerId: string,
+  name: string
+): Model | undefined {
+  const db = getDb()
+  return db
+    .prepare("SELECT * FROM models WHERE provider_id = ? AND name = ?")
+    .get(providerId, name) as Model | undefined
+}
+
 export function updateModel(id: string, updates: Partial<NewModel>): Model | undefined {
   const db = getDb()
   const existing = db.prepare("SELECT * FROM models WHERE id = ?").get(id) as Model | undefined
@@ -206,4 +218,56 @@ export function setSetting(key: string, value: string): void {
   db.prepare(
     "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value"
   ).run(key, value)
+}
+
+// Sync log
+
+export function createSyncLog(log: NewSyncLog): SyncLog {
+  const db = getDb()
+  const id = crypto.randomUUID()
+  db.prepare(
+    `INSERT INTO sync_log (id, provider_id, status, started_at, finished_at, error_message)
+     VALUES (?, ?, ?, ?, ?, ?)`
+  ).run(
+    id,
+    log.provider_id,
+    log.status,
+    log.started_at,
+    log.finished_at,
+    log.error_message
+  )
+  return { ...log, id }
+}
+
+export function getSyncLogs(providerId?: string, limit = 50): SyncLog[] {
+  const db = getDb()
+  if (providerId) {
+    return db
+      .prepare(
+        "SELECT * FROM sync_log WHERE provider_id = ? ORDER BY started_at DESC LIMIT ?"
+      )
+      .all(providerId, limit) as SyncLog[]
+  }
+  return db
+    .prepare("SELECT * FROM sync_log ORDER BY started_at DESC LIMIT ?")
+    .all(limit) as SyncLog[]
+}
+
+export function updateSyncLog(
+  id: string,
+  updates: Partial<NewSyncLog>
+): SyncLog | undefined {
+  const db = getDb()
+  const existing = db
+    .prepare("SELECT * FROM sync_log WHERE id = ?")
+    .get(id) as SyncLog | undefined
+  if (!existing) return undefined
+
+  const next = { ...existing, ...updates }
+  db.prepare(
+    `UPDATE sync_log
+     SET status = ?, finished_at = ?, error_message = ?
+     WHERE id = ?`
+  ).run(next.status, next.finished_at, next.error_message, id)
+  return next
 }
