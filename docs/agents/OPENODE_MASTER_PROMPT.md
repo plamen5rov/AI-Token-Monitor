@@ -68,10 +68,11 @@ The system must normalize all provider data into a unified internal schema.
 The agent MUST follow these rules on every session:
 
 1. **Detect and resolve inconsistencies**
-   Pre-planning docs are a starting point, not immutable truth. When the agent
-   finds contradictions, outdated assumptions, or implementation choices that
-   no longer fit reality, it MUST point them out and ask the user for a final
-   verdict before proceeding.
+   Pre-planning docs are a starting point, not immutable truth. Newer software
+   package versions, discovered constraints, and working code prevail over
+   older spec text. When the agent finds contradictions, outdated assumptions,
+   or implementation choices that no longer fit reality, it MUST point them
+   out and ask the user for a final verdict before proceeding.
 
 2. **Keep docs in sync with decisions**
    Once a decision is made, update `AGENTS.md` and any other relevant spec
@@ -83,6 +84,10 @@ The agent MUST follow these rules on every session:
    least after every commit), append a dated entry describing what changed and
    which files were affected. This log is the primary trail for reversing or
    revisiting steps in future sessions.
+
+4. **Iterate UI and colors from a working app**
+   Design system docs (colors, spacing, components) are starting points. The
+   actual UI is tuned once a working app is visible, not from `.md` files alone.
 
 ---
 
