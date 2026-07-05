@@ -192,11 +192,14 @@ A template defines:
 Example:
 
 ```text
-templates/openai.ts
-templates/anthropic.ts
-templates/openrouter.ts
-templates/groq.ts
+templates/index.ts   # all 14 templates defined in one file
 ```
+
+The current templates: openai, anthropic, openrouter (full usage
+tracking), nvidia, google, groq, mistral, together, deepseek, fireworks,
+perplexity, deepinfra, anyscale, xai (model registry only). OpenAI-compatible
+providers share a single `OpenAICompatibleProvider` adapter and only need
+a template entry to add — see `providers/openai-compatible.ts`.
 
 ---
 
@@ -207,8 +210,6 @@ Each provider implements a unified interface:
 ```ts
 fetchUsage()
 fetchModels()
-fetchPricing()
-fetchCosts()
 healthCheck()
 ```
 
@@ -217,6 +218,14 @@ Located in:
 ```text
 providers/
 ```
+
+OpenAI-compatible providers (nvidia, groq, mistral, together, deepseek,
+fireworks, perplexity, deepinfra, anyscale, xai) share a single
+`OpenAICompatibleProvider` adapter in `providers/openai-compatible.ts` and
+only need a template entry to add. Providers with public usage endpoints
+(openai, anthropic, openrouter) have dedicated adapters. Google has a
+custom adapter (`providers/google.ts`) due to its non-OpenAI model list
+response format.
 
 Example:
 
@@ -363,12 +372,28 @@ Core views:
 
 * cost per model
 * token usage per model
+* pricing per 1k tokens
+* context window
 * performance comparison
 
-## Usage Timeline
+## Usage View
 
+* per-model token breakdown
+* input/output token totals
+* request counts
 * daily / monthly cost graph
 * token usage graph
+
+## Sync View
+
+* sync history log
+* status badges (success / error / partial)
+* manual sync triggers
+
+## Settings View
+
+* refresh interval
+* display currency
 
 ---
 
@@ -444,12 +469,22 @@ Client-side fetching only for interactive UI updates.
 
 ## Provider Template Rules
 
-When adding a new provider:
+When adding a new OpenAI-compatible provider (no public usage endpoint):
 
-1. Create a template in `/templates`
-2. Create an adapter in `/providers`
-3. Map provider-specific models into unified schema
-4. Ensure sync compatibility with database schema
+1. Add a template entry in `templates/index.ts` with `supportsUsage: false`
+2. Add the `type` string to `OPENAI_COMPATIBLE_TYPES` in `providers/index.ts`
+3. Optionally add a badge color in `typeBadgeClass()` in `app/providers/page.tsx`
+
+No new adapter file is needed — the generic `OpenAICompatibleProvider`
+handles it via the template's `baseUrl` and `authMethod`.
+
+When adding a provider WITH a public usage analytics endpoint:
+
+1. Create a template in `templates/index.ts` with `supportsUsage: true`
+2. Create a dedicated adapter in `providers/<name>.ts` implementing `fetchUsage()`
+3. Add a `case` to the factory switch in `providers/index.ts`
+4. Map provider-specific models into unified schema
+5. Ensure sync compatibility with database schema
 
 No provider should bypass this system.
 

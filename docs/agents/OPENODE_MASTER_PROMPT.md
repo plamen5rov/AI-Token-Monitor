@@ -19,7 +19,8 @@ ATM (AI Token Monitor) is a local-first, self-hostable dashboard that tracks:
 * provider-level comparison
 
 It supports multiple AI providers via adapters (OpenAI, Anthropic, OpenRouter,
-etc.).
+Google AI Studio, NVIDIA NIM, Groq, Mistral, Together AI, DeepSeek, Fireworks
+AI, Perplexity, DeepInfra, Anyscale, xAI, etc.).
 
 The system must normalize all provider data into a unified internal schema.
 

@@ -131,7 +131,8 @@ npm run start
 
 1. Navigate to **Providers** in the sidebar.
 2. Click **Add Provider**.
-3. Select a provider type (OpenAI, Anthropic, OpenRouter, or NVIDIA NIM).
+3. Select a provider type from the dropdown (14 providers available — see
+   [Provider Support](#provider-support) below).
 4. Enter a display name and your API key.
 5. Click **Add Provider**.
 
@@ -302,7 +303,7 @@ the latest commit if you hit this.
 app/              # Next.js App Router pages and server actions
 components/       # React components (UI, dashboard, providers)
 lib/              # Shared utilities (db, crypto, sync, format)
-providers/        # Provider adapters (OpenAI, Anthropic, OpenRouter)
+providers/        # Provider adapters (OpenAI, Anthropic, OpenRouter, Google, OpenAICompatible)
 templates/        # Provider template definitions
 database/         # SQLite connection and migration runner
 migrations/       # SQL migration files

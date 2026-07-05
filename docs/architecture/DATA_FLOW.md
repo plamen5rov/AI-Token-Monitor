@@ -24,7 +24,9 @@ No UI component is allowed to bypass this flow.
 
 ## 1. Provider Layer (External APIs)
 
-Each provider (OpenAI, Anthropic, OpenRouter, etc.) exposes different:
+Each provider (OpenAI, Anthropic, OpenRouter, NVIDIA NIM, Google AI Studio,
+Groq, Mistral, Together AI, DeepSeek, Fireworks AI, Perplexity, DeepInfra,
+Anyscale, xAI, etc.) exposes different:
 
 * authentication methods
 * endpoints

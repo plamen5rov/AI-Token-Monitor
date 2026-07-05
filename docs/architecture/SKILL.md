@@ -57,9 +57,14 @@ Used by:
 
 * OpenAI
 * OpenRouter
+* NVIDIA NIM
 * Groq
 * Together AI
 * Fireworks AI
+* DeepSeek
+* DeepInfra
+* Anyscale
+* xAI
 * many self-hosted gateways
 
 ### Key characteristics
