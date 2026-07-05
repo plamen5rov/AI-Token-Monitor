@@ -154,10 +154,19 @@ export function deleteModel(id: string): boolean {
 export function createUsageRecord(record: NewUsageRecord): UsageRecord {
   const db = getDb()
   const id = crypto.randomUUID()
+
+  // Upsert on (provider_id, model_id, timestamp). Re-syncing the same daily
+  // bucket replaces tokens/cost with the latest cumulative value rather than
+  // double-counting. See migrations/002_usage_records_dedupe.sql.
   db.prepare(
     `INSERT INTO usage_records
        (id, provider_id, model_id, timestamp, input_tokens, output_tokens, cost_usd, request_count, raw_payload)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(provider_id, model_id, timestamp) DO UPDATE SET
+       input_tokens = excluded.input_tokens,
+       output_tokens = excluded.output_tokens,
+       cost_usd = excluded.cost_usd,
+       request_count = excluded.request_count`
   ).run(
     id,
     record.provider_id,
@@ -169,7 +178,108 @@ export function createUsageRecord(record: NewUsageRecord): UsageRecord {
     record.request_count,
     record.raw_payload ?? null
   )
-  return db.prepare("SELECT * FROM usage_records WHERE id = ?").get(id) as UsageRecord
+
+  return db.prepare(
+    "SELECT * FROM usage_records WHERE provider_id = ? AND model_id = ? AND timestamp = ?"
+  ).get(record.provider_id, record.model_id, record.timestamp) as UsageRecord
+}
+
+// --- usage_daily (pre-aggregated for fast dashboards) ---
+
+export type UsageDailyRow = {
+  date: string
+  provider_id: string | null
+  model_id: string | null
+  total_input_tokens: number
+  total_output_tokens: number
+  total_cost_usd: number
+  total_requests: number
+}
+
+export function rebuildUsageDaily(providerId: string): void {
+  const db = getDb()
+
+  db.prepare("DELETE FROM usage_daily WHERE provider_id = ?").run(providerId)
+
+  db.prepare(
+    `INSERT INTO usage_daily
+       (id, date, provider_id, model_id, total_input_tokens, total_output_tokens, total_cost_usd, total_requests)
+     SELECT
+       provider_id || ':' || COALESCE(model_id, '') || ':' || date(ROUND(timestamp / 1000.0), 'unixepoch') AS row_id,
+       date(ROUND(timestamp / 1000.0), 'unixepoch') AS day,
+       provider_id,
+       model_id,
+       SUM(input_tokens) AS total_input_tokens,
+       SUM(output_tokens) AS total_output_tokens,
+       SUM(cost_usd) AS total_cost_usd,
+       SUM(request_count) AS total_requests
+     FROM usage_records
+     WHERE provider_id = ?
+     GROUP BY day, provider_id, model_id`
+  ).run(providerId)
+}
+
+export function getUsageDaily(opts?: {
+  providerId?: string
+  startDate?: string
+  endDate?: string
+  limit?: number
+}): UsageDailyRow[] {
+  const db = getDb()
+  const conditions: string[] = []
+  const params: (string | number)[] = []
+
+  if (opts?.providerId) {
+    conditions.push("provider_id = ?")
+    params.push(opts.providerId)
+  }
+  if (opts?.startDate) {
+    conditions.push("date >= ?")
+    params.push(opts.startDate)
+  }
+  if (opts?.endDate) {
+    conditions.push("date <= ?")
+    params.push(opts.endDate)
+  }
+
+  const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
+  const limit = opts?.limit ?? 365
+
+  return db
+    .prepare(
+      `SELECT date, provider_id, model_id, total_input_tokens, total_output_tokens, total_cost_usd, total_requests
+       FROM usage_daily
+       ${where}
+       ORDER BY date ASC
+       LIMIT ?`
+    )
+    .all(...params, limit) as UsageDailyRow[]
+}
+
+export function getDashboardTotals(): {
+  total_cost_usd: number
+  total_input_tokens: number
+  total_output_tokens: number
+  total_requests: number
+} {
+  const db = getDb()
+  return (
+    db
+      .prepare(
+        `SELECT
+           COALESCE(SUM(total_cost_usd), 0) AS total_cost_usd,
+           COALESCE(SUM(total_input_tokens), 0) AS total_input_tokens,
+           COALESCE(SUM(total_output_tokens), 0) AS total_output_tokens,
+           COALESCE(SUM(total_requests), 0) AS total_requests
+         FROM usage_daily`
+      )
+      .get() as {
+      total_cost_usd: number
+      total_input_tokens: number
+      total_output_tokens: number
+      total_requests: number
+    }
+  )
 }
 
 export function getUsageRecords(limit = 100): UsageRecord[] {

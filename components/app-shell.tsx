@@ -3,14 +3,15 @@
 import * as React from "react"
 import { BarChart3, Cpu, LayoutDashboard, RefreshCw, Server, Settings } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SyncAllButton } from "@/components/sync-button"
 
 const navItems = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
   { label: "Providers", href: "/providers", icon: Server },
   { label: "Models", href: "/models", icon: Cpu },
   { label: "Usage", href: "/usage", icon: BarChart3 },
+  { label: "Sync", href: "/sync", icon: RefreshCw },
   { label: "Settings", href: "/settings", icon: Settings },
 ]
 
@@ -43,10 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-6">
           <h1 className="text-base font-semibold">AI Token Monitor</h1>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="gap-2">
-              <RefreshCw className="h-4 w-4" />
-              Sync
-            </Button>
+            <SyncAllButton />
             <ThemeToggle />
           </div>
         </header>

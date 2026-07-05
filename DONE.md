@@ -30,6 +30,12 @@ Changelog for the AI Token Monitor (ATM) project.
 
 ---
 
+## Phase 4 — Synchronization Engine
+
+- [2026-07-05] Implemented synchronization engine: duplicate protection for usage records via unique index `(provider_id, model_id, timestamp)` with `ON CONFLICT DO UPDATE` replace semantics (`migrations/002_usage_records_dedupe.sql`, updated `createUsageRecord` in `lib/db.ts`); pre-aggregated `usage_daily` rollup populated during sync via `rebuildUsageDaily()` plus `getUsageDaily()` and `getDashboardTotals()` query helpers; sync flow in `lib/sync.ts` now rebuilds daily aggregates after each provider sync; server actions `syncAllAction` and `syncProviderAction` (`app/actions/sync.ts`); reusable client `SyncAllButton`/`SyncOneButton` components (`components/sync-button.tsx`); wired header Sync button to call `syncAllAction`; built sync history page at `/sync` (force-dynamic server component) showing per-provider sync buttons + history table with status badges and durations; added "Sync" nav entry; extended `.gitignore` for `*.sqlite-shm`/`*.sqlite-wal`; verified idempotency and replace semantics end-to-end with `scripts/verify-sync.ts` (re-syncing same bucket does not double counts; growing bucket replaces old value). MVP dedupe decision noted: daily-bucket providers only; per-request providers (Phase 6) will need a different dedupe key. (files modified: components/app-shell.tsx, lib/db.ts, lib/sync.ts, .gitignore, DONE.md; files added: migrations/002_usage_records_dedupe.sql, app/actions/sync.ts, app/sync/page.tsx, components/sync-button.tsx, scripts/verify-sync.ts)
+
+---
+
 ## Process & Tooling
 
 - [2026-07-05] Created `ERROR-LOG.md` at project root and added error-logging principle to workflow rules; logged first entry about Dark Reader hydration mismatch; mirrored the principle into global OpenCode config at `~/.config/opencode/AGENTS.md` (files modified: ERROR-LOG.md, AGENTS.md, docs/agents/OPENODE_MASTER_PROMPT.md, docs/agents/OPENODE_BUILD_AGENT.md, ~/.config/opencode/AGENTS.md, DONE.md)

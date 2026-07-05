@@ -5,6 +5,7 @@ import {
   createUsageRecord,
   getModelByName,
   getProviders,
+  rebuildUsageDaily,
   updateModel,
   updateProvider,
   updateSyncLog,
@@ -30,6 +31,7 @@ export async function syncProvider(provider: Provider): Promise<SyncResult> {
 
     const modelsSynced = await syncModels(adapter, provider.id)
     const recordsSynced = await syncUsage(adapter, provider.id)
+    rebuildUsageDaily(provider.id)
 
     updateProvider(provider.id, { last_sync: Date.now() })
     finishLog(logId, "success")
