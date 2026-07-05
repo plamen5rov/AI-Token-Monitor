@@ -1,12 +1,14 @@
 # OPENCODE MASTER PROMPT — AI TOKEN MONITOR (ATM)
 
-You are an autonomous senior full-stack engineer operating inside the OpenCode environment.
+You are an autonomous senior full-stack engineer operating inside the OpenCode
+environment.
 
-Your task is to generate a complete, production-ready MVP of the **AI Token Monitor (ATM)** system.
+Your task is to generate a complete, production-ready MVP of the **AI Token
+Monitor (ATM)** system.
 
 ---
 
-# 0. Project Overview
+## 0. Project Overview
 
 ATM (AI Token Monitor) is a local-first, self-hostable dashboard that tracks:
 
@@ -16,13 +18,14 @@ ATM (AI Token Monitor) is a local-first, self-hostable dashboard that tracks:
 * model-level analytics
 * provider-level comparison
 
-It supports multiple AI providers via adapters (OpenAI, Anthropic, OpenRouter, etc.).
+It supports multiple AI providers via adapters (OpenAI, Anthropic, OpenRouter,
+etc.).
 
 The system must normalize all provider data into a unified internal schema.
 
 ---
 
-# 1. HARD CONSTRAINTS (NON-NEGOTIABLE)
+## 1. HARD CONSTRAINTS (NON-NEGOTIABLE)
 
 ## Architecture
 
@@ -60,7 +63,7 @@ The system must normalize all provider data into a unified internal schema.
 
 ---
 
-# 2. ARCHITECTURE MODEL
+## 2. ARCHITECTURE MODEL
 
 Use this strict data flow:
 
@@ -72,7 +75,7 @@ No component may bypass this pipeline.
 
 ---
 
-# 3. REQUIRED DOCUMENTS (YOU MUST FOLLOW THEM)
+## 3. REQUIRED DOCUMENTS (YOU MUST FOLLOW THEM)
 
 You must strictly follow:
 
@@ -87,7 +90,7 @@ If any conflict exists:
 
 ---
 
-# 4. DATABASE RULES
+## 4. DATABASE RULES
 
 You MUST implement exactly this schema:
 
@@ -108,11 +111,11 @@ Rules:
 
 ---
 
-# 5. PROVIDER SYSTEM
+## 5. PROVIDER SYSTEM
 
 You must implement a unified adapter system.
 
-## Required interface:
+## Required interface
 
 ```ts id="provider-interface"
 interface ProviderAdapter {
@@ -127,7 +130,7 @@ interface ProviderAdapter {
 
 ---
 
-## Required providers (MVP):
+## Required providers (MVP)
 
 * OpenAI
 * Anthropic
@@ -135,7 +138,7 @@ interface ProviderAdapter {
 
 ---
 
-## Normalized output format:
+## Normalized output format
 
 ```ts id="normalized"
 {
@@ -153,7 +156,7 @@ interface ProviderAdapter {
 
 ---
 
-# 6. BUILD PHASES (STRICT ORDER)
+## 6. BUILD PHASES (STRICT ORDER)
 
 You MUST follow this order exactly:
 
@@ -260,7 +263,7 @@ OUTPUT:
 
 ---
 
-# 7. UI REQUIREMENTS
+## 7. UI REQUIREMENTS
 
 Design must follow:
 
@@ -280,7 +283,7 @@ No decorative elements.
 
 ---
 
-# 8. COMPONENT RULES
+## 8. COMPONENT RULES
 
 * Components must be small (<300 lines)
 * Use composition, not inheritance
@@ -289,7 +292,7 @@ No decorative elements.
 
 ---
 
-# 9. STATE MANAGEMENT RULES
+## 9. STATE MANAGEMENT RULES
 
 * Prefer Server Components
 * Use Server Actions where possible
@@ -298,7 +301,7 @@ No decorative elements.
 
 ---
 
-# 10. DATA INTEGRITY RULES
+## 10. DATA INTEGRITY RULES
 
 * No duplicate usage records
 * All timestamps must be UNIX ms
@@ -307,7 +310,7 @@ No decorative elements.
 
 ---
 
-# 11. PERFORMANCE RULES
+## 11. PERFORMANCE RULES
 
 * Use aggregated tables (usage_daily) for charts
 * Avoid heavy queries on usage_records in UI
@@ -315,7 +318,7 @@ No decorative elements.
 
 ---
 
-# 12. ERROR HANDLING
+## 12. ERROR HANDLING
 
 * Never silently fail
 * Log all sync failures into sync_log
@@ -323,7 +326,7 @@ No decorative elements.
 
 ---
 
-# 13. DEFINITION OF DONE (MVP)
+## 13. DEFINITION OF DONE (MVP)
 
 The project is complete when:
 
@@ -339,7 +342,7 @@ The project is complete when:
 
 ---
 
-# 14. POST-MVP FEATURES (DO NOT IMPLEMENT)
+## 14. POST-MVP FEATURES (DO NOT IMPLEMENT)
 
 * forecasting
 * anomaly detection
@@ -350,7 +353,7 @@ The project is complete when:
 
 ---
 
-# 15. GUIDING PRINCIPLE
+## 15. GUIDING PRINCIPLE
 
 Always choose:
 
@@ -366,4 +369,4 @@ This project prioritizes:
 
 ---
 
-# END OF PROMPT
+## END OF PROMPT

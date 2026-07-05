@@ -1,14 +1,16 @@
 # DATA_FLOW.md
 
-# AI Token Monitor (ATM) — Data Flow Specification
+## AI Token Monitor (ATM) — Data Flow Specification
 
-This document defines how data moves through the system from AI providers → database → UI.
+This document defines how data moves through the system from AI providers →
+database → UI.
 
-It is the **single source of truth for understanding how ATM works internally at runtime**.
+It is the **single source of truth for understanding how ATM works internally at
+runtime**.
 
 ---
 
-# Core Principle
+## Core Principle
 
 All data in ATM follows one strict pipeline:
 
@@ -20,7 +22,7 @@ No UI component is allowed to bypass this flow.
 
 ---
 
-# 1. Provider Layer (External APIs)
+## 1. Provider Layer (External APIs)
 
 Each provider (OpenAI, Anthropic, OpenRouter, etc.) exposes different:
 
@@ -29,7 +31,7 @@ Each provider (OpenAI, Anthropic, OpenRouter, etc.) exposes different:
 * response formats
 * token accounting models
 
-### Example inputs:
+### Example inputs
 
 ```json id="openai-response"
 {
@@ -53,15 +55,15 @@ Each provider (OpenAI, Anthropic, OpenRouter, etc.) exposes different:
 
 ---
 
-# 2. Provider Adapter Layer
+## 2. Provider Adapter Layer
 
 Each provider has a dedicated adapter in `/providers`.
 
-### Responsibility:
+### Responsibility
 
 Convert raw API responses into a unified format.
 
-### Output MUST ALWAYS be:
+### Output MUST ALWAYS be
 
 ```ts id="normalized-output"
 {
@@ -79,11 +81,11 @@ Convert raw API responses into a unified format.
 
 ---
 
-# 3. Normalization Layer
+## 3. Normalization Layer
 
 This is where all inconsistencies are resolved.
 
-## Key transformations:
+## Key transformations
 
 ### Token normalization
 
@@ -110,14 +112,14 @@ claude-3-5-sonnet → anthropic:claude-3-5-sonnet
 
 If provider does NOT return cost:
 
-```
+```text
 cost = (input_tokens / 1000 * input_price) +
        (output_tokens / 1000 * output_price)
 ```
 
 ---
 
-# 4. Database Layer (SQLite)
+## 4. Database Layer (SQLite)
 
 All normalized data is stored in:
 
@@ -143,7 +145,7 @@ This is used for fast dashboards.
 
 ---
 
-# 5. Sync Flow (critical system behavior)
+## 5. Sync Flow (critical system behavior)
 
 Triggered manually or via scheduled sync.
 
@@ -167,13 +169,13 @@ Write sync_log entry
 
 ---
 
-# 6. UI Data Flow
+## 6. UI Data Flow
 
 The UI NEVER talks to providers directly.
 
 It only reads from SQLite.
 
-### UI reads:
+### UI reads
 
 ## Overview page
 
@@ -194,7 +196,7 @@ It only reads from SQLite.
 
 ---
 
-# 7. Data Freshness Rules
+## 7. Data Freshness Rules
 
 ATM supports 3 states:
 
@@ -215,7 +217,7 @@ ATM supports 3 states:
 
 ---
 
-# 8. Sync Ownership Rule
+## 8. Sync Ownership Rule
 
 Only ONE system is allowed to write usage data:
 
@@ -226,7 +228,7 @@ Only ONE system is allowed to write usage data:
 
 ---
 
-# 9. Error Flow
+## 9. Error Flow
 
 If provider sync fails:
 
@@ -244,7 +246,7 @@ No partial UI corruption is allowed.
 
 ---
 
-# 10. Data Integrity Rules
+## 10. Data Integrity Rules
 
 * No duplicate usage_records (id must be unique)
 * No direct provider writes to DB
@@ -253,7 +255,7 @@ No partial UI corruption is allowed.
 
 ---
 
-# 11. Mental Model (important)
+## 11. Mental Model (important)
 
 Think of ATM as:
 
@@ -269,7 +271,7 @@ Never reverse this flow.
 
 ---
 
-# 12. Guiding Principle
+## 12. Guiding Principle
 
 If you are unsure where logic belongs:
 

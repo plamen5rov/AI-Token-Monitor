@@ -1,20 +1,22 @@
 # PROVIDER_ADAPTER_GENERATOR.md
 
-# AI Token Monitor (ATM) — Provider Adapter Generator System
+## AI Token Monitor (ATM) — Provider Adapter Generator System
 
-This document defines the AI-friendly system for generating provider integrations in a consistent and automated way.
+This document defines the AI-friendly system for generating provider
+integrations in a consistent and automated way.
 
 ---
 
-# Core Idea
+## Core Idea
 
 Every AI provider is implemented as a **standard adapter**.
 
-To avoid repetitive coding, adapters are generated using a **template-based system**.
+To avoid repetitive coding, adapters are generated using a **template-based
+system**.
 
 ---
 
-# Folder Structure
+## Folder Structure
 
 ```text id="structure"
 providers/
@@ -31,7 +33,7 @@ templates/
 
 ---
 
-# Base Adapter Interface
+## Base Adapter Interface
 
 All providers must implement:
 
@@ -50,7 +52,7 @@ export interface ProviderAdapter {
 
 ---
 
-# Base Class
+## Base Class
 
 All adapters extend a shared base:
 
@@ -76,7 +78,7 @@ export abstract class BaseProvider implements ProviderAdapter {
 
 ---
 
-# Adapter Generation Strategy
+## Adapter Generation Strategy
 
 Each provider is defined using a **template descriptor**.
 
@@ -103,7 +105,7 @@ export const openaiTemplate = {
 
 ---
 
-# AI Adapter Generator Rules
+## AI Adapter Generator Rules
 
 When generating a new provider:
 
@@ -134,7 +136,7 @@ When generating a new provider:
 
 ---
 
-# OpenAI-Compatible Example
+## OpenAI-Compatible Example
 
 ```ts id="openai-adapter"
 export class OpenAIProvider extends BaseProvider {
@@ -156,7 +158,7 @@ export class OpenAIProvider extends BaseProvider {
 
 ---
 
-# OpenRouter Special Case
+## OpenRouter Special Case
 
 Rules:
 
@@ -169,7 +171,7 @@ Rules:
 
 ---
 
-# Required Output Contract
+## Required Output Contract
 
 Every adapter MUST output:
 
@@ -186,7 +188,7 @@ type NormalizedUsageRecord = {
 
 ---
 
-# What NOT to Do
+## What NOT to Do
 
 Do NOT:
 
@@ -197,7 +199,7 @@ Do NOT:
 
 ---
 
-# Guiding Principle
+## Guiding Principle
 
 A provider adapter is NOT a full SDK.
 

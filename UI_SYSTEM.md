@@ -1,14 +1,16 @@
 # UI_SYSTEM.md
 
-# AI Token Monitor (ATM) — Design System
+## AI Token Monitor (ATM) — Design System
 
-This document defines the visual language, layout principles, and theme system for ATM.
+This document defines the visual language, layout principles, and theme system
+for ATM.
 
-The goal is to create a **modern, elegant, developer-grade dashboard** with a strong dark-first identity and optional light mode.
+The goal is to create a **modern, elegant, developer-grade dashboard** with a
+strong dark-first identity and optional light mode.
 
 ---
 
-# Core Design Philosophy
+## Core Design Philosophy
 
 ATM should feel like:
 
@@ -27,7 +29,7 @@ Design goals:
 
 ---
 
-# Theme Strategy
+## Theme Strategy
 
 ## Default Theme: Dark Mode
 
@@ -40,7 +42,7 @@ Characteristics:
 * soft borders
 * minimal glow accents
 
-### Base palette (dark):
+### Base palette (dark)
 
 ```text id="dark-palette"
 background: #0B0F17
@@ -70,7 +72,7 @@ Characteristics:
 * reduced contrast fatigue
 * same layout, no structural changes
 
-### Base palette (light):
+### Base palette (light)
 
 ```text id="light-palette"
 background: #F9FAFB
@@ -90,7 +92,7 @@ error:      #EF4444
 
 ---
 
-# Theme Rules
+## Theme Rules
 
 * Dark mode is default on first load
 * Light mode is opt-in
@@ -99,7 +101,7 @@ error:      #EF4444
 
 ---
 
-# Layout System
+## Layout System
 
 ## Layout Principle: “Dashboard Grid Clarity”
 
@@ -139,7 +141,7 @@ Uses card-based layout:
 
 ---
 
-# Components
+## Components
 
 ## Cards
 
@@ -193,7 +195,7 @@ Design principles:
 
 ---
 
-# Typography
+## Typography
 
 ## Font system
 
@@ -218,7 +220,7 @@ Preferred:
 
 ---
 
-# Spacing System
+## Spacing System
 
 Strict spacing scale:
 
@@ -230,7 +232,7 @@ No arbitrary spacing values.
 
 ---
 
-# Borders & Radius
+## Borders & Radius
 
 * Border radius: 8px default
 * Cards: 10–12px
@@ -240,7 +242,7 @@ Borders are subtle, never dominant.
 
 ---
 
-# Interaction Design
+## Interaction Design
 
 ## Hover behavior
 
@@ -255,7 +257,7 @@ Borders are subtle, never dominant.
 
 ---
 
-# Accent Color
+## Accent Color
 
 Single accent system:
 
@@ -271,7 +273,7 @@ No multi-accent chaos.
 
 ---
 
-# Data Density Rule
+## Data Density Rule
 
 ATM is a **high-information dashboard**, but:
 
@@ -282,7 +284,7 @@ ATM is a **high-information dashboard**, but:
 
 ---
 
-# Dark Mode Aesthetic Reference
+## Dark Mode Aesthetic Reference
 
 Inspired by:
 
@@ -293,7 +295,7 @@ Inspired by:
 
 ---
 
-# Light Mode Aesthetic Reference
+## Light Mode Aesthetic Reference
 
 Inspired by:
 
@@ -303,7 +305,7 @@ Inspired by:
 
 ---
 
-# Accessibility Rules
+## Accessibility Rules
 
 * minimum contrast AA compliance
 * no color-only meaning
@@ -311,7 +313,7 @@ Inspired by:
 
 ---
 
-# Guiding Principle
+## Guiding Principle
 
 ATM should feel:
 

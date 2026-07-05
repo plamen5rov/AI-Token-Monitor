@@ -1,14 +1,16 @@
 # DATABASE_SCHEMA.md
 
-# AI Token Monitor (ATM) — Normalized Database Schema
+## AI Token Monitor (ATM) — Normalized Database Schema
 
-This schema defines a unified, provider-agnostic data model for tracking AI API usage, costs, models, and synchronization across multiple providers.
+This schema defines a unified, provider-agnostic data model for tracking AI API
+usage, costs, models, and synchronization across multiple providers.
 
-The system is designed so that **all providers normalize into a single canonical structure**.
+The system is designed so that **all providers normalize into a single canonical
+structure**.
 
 ---
 
-# Core Design Principle
+## Core Design Principle
 
 All provider data must be normalized into:
 
@@ -20,7 +22,7 @@ No provider-specific schema is allowed in the database layer.
 
 ---
 
-# Tables Overview
+## Tables Overview
 
 ## 1. providers
 
@@ -157,7 +159,7 @@ CREATE TABLE settings (
 
 ---
 
-# Data Normalization Rules
+## Data Normalization Rules
 
 All provider adapters MUST convert raw API data into:
 
@@ -177,7 +179,7 @@ type NormalizedUsageRecord = {
 
 ---
 
-# Key Constraints
+## Key Constraints
 
 * No provider-specific tables allowed
 * No raw API responses stored as primary data
@@ -186,7 +188,7 @@ type NormalizedUsageRecord = {
 
 ---
 
-# Performance Rules
+## Performance Rules
 
 * Use `usage_daily` for dashboards
 * Never aggregate raw `usage_records` in UI queries
@@ -198,7 +200,7 @@ type NormalizedUsageRecord = {
 
 ---
 
-# Guiding Principle
+## Guiding Principle
 
 This database is not a log of APIs.
 

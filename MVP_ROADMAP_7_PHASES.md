@@ -1,16 +1,19 @@
 # MVP_ROADMAP_7_StageS.md
 
-# AI Token Monitor (ATM) — 7-Stage MVP Roadmap
+## AI Token Monitor (ATM) — 7-Stage MVP Roadmap
 
-This document defines the implementation roadmap for the first working version of AI Token Monitor (ATM).
+This document defines the implementation roadmap for the first working version
+of AI Token Monitor (ATM).
 
-The roadmap is organized into **Stages**, not time estimates. Complete each Stage before moving to the next.
+The roadmap is organized into **Stages**, not time estimates. Complete each
+Stage before moving to the next.
 
-The objective is to build a clean, maintainable MVP that can be extended without major architectural changes.
+The objective is to build a clean, maintainable MVP that can be extended without
+major architectural changes.
 
 ---
 
-# Stage 1 — Project Foundation
+## Stage 1 — Project Foundation
 
 ## Goals
 
@@ -31,7 +34,7 @@ The objective is to build a clean, maintainable MVP that can be extended without
 * Light theme toggle available
 * Initial folder structure in place
 
-**Exit Criteria**
+### Stage 1 Exit Criteria
 
 * Project builds successfully
 * No TypeScript errors
@@ -39,9 +42,9 @@ The objective is to build a clean, maintainable MVP that can be extended without
 
 ---
 
-# Stage 2 — Database Layer
+## Stage 2 — Database Layer
 
-## Goals
+## Goals (2)
 
 * Implement the SQLite connection layer
 * Create the database module
@@ -49,7 +52,7 @@ The objective is to build a clean, maintainable MVP that can be extended without
 * Create a migration system using raw SQL
 * Create reusable database helper functions
 
-## Deliverables
+## Deliverables (2)
 
 * Database initializes automatically
 * CRUD operations for providers
@@ -57,7 +60,7 @@ The objective is to build a clean, maintainable MVP that can be extended without
 * CRUD operations for usage records
 * Migration system operational
 
-**Exit Criteria**
+### Stage 2 Exit Criteria
 
 * Database is created automatically
 * Tables are populated successfully
@@ -65,9 +68,9 @@ The objective is to build a clean, maintainable MVP that can be extended without
 
 ---
 
-# Stage 3 — Provider Integration Framework
+## Stage 3 — Provider Integration Framework
 
-## Goals
+## Goals (3)
 
 * Implement the BaseProvider interface
 * Build the provider adapter system
@@ -75,14 +78,14 @@ The objective is to build a clean, maintainable MVP that can be extended without
 * Integrate the first provider (OpenAI)
 * Store normalized usage data in SQLite
 
-## Deliverables
+## Deliverables (3)
 
 * Provider abstraction complete
 * OpenAI adapter functional
 * Usage synchronization working
 * Cost normalization implemented
 
-**Exit Criteria**
+### Stage 3 Exit Criteria
 
 * Usage data is fetched successfully
 * Normalized records are stored correctly
@@ -90,9 +93,9 @@ The objective is to build a clean, maintainable MVP that can be extended without
 
 ---
 
-# Stage 4 — Synchronization Engine
+## Stage 4 — Synchronization Engine
 
-## Goals
+## Goals (4)
 
 * Implement the synchronization service
 * Add manual "Sync Now" functionality
@@ -118,14 +121,14 @@ Update aggregates
 Write sync log
 ```
 
-## Deliverables
+## Deliverables (4)
 
 * Reliable synchronization pipeline
 * Sync history page
 * Error handling
 * Duplicate protection
 
-**Exit Criteria**
+### Stage 4 Exit Criteria
 
 * Sync completes successfully
 * Errors are logged correctly
@@ -133,9 +136,9 @@ Write sync log
 
 ---
 
-# Stage 5 — Dashboard & Analytics
+## Stage 5 — Dashboard & Analytics
 
-## Goals
+## Goals (5)
 
 Build the first usable dashboard.
 
@@ -158,13 +161,13 @@ Build the first usable dashboard.
 * Model breakdown
 * Recent activity
 
-## Deliverables
+## Deliverables (5)
 
 * Fully functional analytics dashboard
 * Responsive layout
 * Fast chart rendering
 
-**Exit Criteria**
+### Stage 5 Exit Criteria
 
 * Dashboard displays live data
 * Charts update correctly
@@ -172,9 +175,9 @@ Build the first usable dashboard.
 
 ---
 
-# Stage 6 — Multi-Provider Support
+## Stage 6 — Multi-Provider Support
 
-## Goals
+## Goals (6)
 
 Expand ATM beyond a single provider.
 
@@ -190,13 +193,13 @@ Implement:
 * Enable/disable providers
 * Provider health checks
 
-## Deliverables
+## Deliverables (6)
 
 * Multiple providers configured simultaneously
 * Unified analytics across providers
 * Provider status monitoring
 
-**Exit Criteria**
+### Stage 6 Exit Criteria
 
 * Multiple providers synchronize correctly
 * Dashboard aggregates data consistently
@@ -204,9 +207,9 @@ Implement:
 
 ---
 
-# Stage 7 — MVP Polish & Release Readiness
+## Stage 7 — MVP Polish & Release Readiness
 
-## Goals
+## Goals (7)
 
 Prepare ATM for public release.
 
@@ -236,13 +239,13 @@ Prepare ATM for public release.
 * Test synchronization
 * Test theme switching
 
-## Deliverables
+## Deliverables (7)
 
 * Stable MVP
 * Complete documentation
 * Release-ready repository
 
-**Exit Criteria**
+### Stage 7 Exit Criteria
 
 The MVP is considered complete when:
 
@@ -252,11 +255,12 @@ The MVP is considered complete when:
 * API keys can be configured through the UI
 * Data persists correctly in SQLite
 * Documentation is complete
-* The project can be cloned and started by another developer without additional setup
+* The project can be cloned and started by another developer without
+  additional setup
 
 ---
 
-# Post-MVP (Not Part of This Roadmap)
+## Post-MVP (Not Part of This Roadmap)
 
 The following features are intentionally deferred:
 
@@ -273,7 +277,7 @@ The following features are intentionally deferred:
 
 ---
 
-# Guiding Principles
+## Guiding Principles
 
 During every Stage:
 
@@ -281,5 +285,6 @@ During every Stage:
 * Keep components small and composable.
 * Normalize all provider data before storage.
 * Avoid premature optimization.
-* Maintain a clear separation between UI, business logic, providers, and database layers.
+* Maintain a clear separation between UI, business logic, providers,
+  and database layers.
 * Build one complete feature at a time before moving to the next Stage.

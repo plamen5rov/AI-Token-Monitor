@@ -1,8 +1,9 @@
 # AGENTS.md
 
-# AI Token Monitor (ATM)
+## AI Token Monitor (ATM)
 
-AI Token Monitor (ATM) is a self-hostable dashboard for tracking usage, costs, and model-level analytics across multiple AI API providers.
+AI Token Monitor (ATM) is a self-hostable dashboard for tracking usage, costs,
+and model-level analytics across multiple AI API providers.
 
 It focuses on:
 
@@ -12,11 +13,12 @@ It focuses on:
 * model-level breakdown per provider
 * clean, modern dashboard UX
 
-The project is MIT licensed and designed for single-user local or self-hosted deployment.
+The project is MIT licensed and designed for single-user local or self-hosted
+deployment.
 
 ---
 
-# Core Product Concept
+## Core Product Concept
 
 ATM allows users to:
 
@@ -30,7 +32,7 @@ Supported providers are implemented via adapters.
 
 ---
 
-# Core Principles
+## Core Principles
 
 Always optimize for:
 
@@ -45,7 +47,7 @@ Avoid overengineering.
 
 ---
 
-# Tech Stack
+## Tech Stack
 
 ## Framework
 
@@ -71,7 +73,7 @@ Database access:
 
 ---
 
-# Architecture Overview
+## Architecture Overview
 
 Single full-stack Next.js application.
 
@@ -93,7 +95,7 @@ No external API layer.
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```text
 app/
@@ -110,11 +112,12 @@ Keep structure shallow and predictable.
 
 ---
 
-# Provider System
+## Provider System
 
 ATM is built around a **provider template system**.
 
-Each provider is defined in `/templates` and instantiated into a provider adapter.
+Each provider is defined in `/templates` and instantiated into a provider
+adapter.
 
 ## Provider Template Concept
 
@@ -138,7 +141,7 @@ templates/groq.ts
 
 ---
 
-# Provider Adapters
+## Provider Adapters
 
 Each provider implements a unified interface:
 
@@ -166,7 +169,7 @@ providers/openrouter.ts
 
 ---
 
-# Key Requirement: Model-Level Analytics
+## Key Requirement: Model-Level Analytics
 
 ATM must support:
 
@@ -176,11 +179,12 @@ ATM must support:
 * token breakdown (input/output)
 * historical trends
 
-Each provider adapter must map provider-specific model data into a unified schema.
+Each provider adapter must map provider-specific model data into a unified
+schema.
 
 ---
 
-# Database Schema
+## Database Schema
 
 SQLite schema must support:
 
@@ -223,7 +227,7 @@ SQLite schema must support:
 
 ---
 
-# API Key Handling
+## API Key Handling
 
 * API keys must NEVER be exposed to the client
 * API keys must be stored encrypted in SQLite
@@ -231,7 +235,7 @@ SQLite schema must support:
 
 ---
 
-# Sync System
+## Sync System
 
 ATM uses periodic synchronization.
 
@@ -257,7 +261,7 @@ Update last_sync timestamp
 
 ---
 
-# UI Philosophy
+## UI Philosophy
 
 ATM should feel like a modern developer observability tool.
 
@@ -279,7 +283,7 @@ Design goals:
 
 ---
 
-# Dashboard Requirements
+## Dashboard Requirements
 
 Core views:
 
@@ -309,7 +313,7 @@ Core views:
 
 ---
 
-# Components
+## Components
 
 * reusable
 * small
@@ -319,7 +323,7 @@ Do not create large monolithic UI components.
 
 ---
 
-# State Management
+## State Management
 
 Prefer:
 
@@ -333,7 +337,7 @@ Use Zustand only if absolutely necessary.
 
 ---
 
-# Data Fetching Strategy
+## Data Fetching Strategy
 
 Prefer server-side fetching via:
 
@@ -344,7 +348,7 @@ Client-side fetching only for interactive UI updates.
 
 ---
 
-# SQL Guidelines
+## SQL Guidelines
 
 * Write SQL manually
 * Use prepared statements
@@ -353,7 +357,7 @@ Client-side fetching only for interactive UI updates.
 
 ---
 
-# Performance
+## Performance
 
 * Prefer server rendering
 * Avoid unnecessary client-side computation
@@ -362,7 +366,7 @@ Client-side fetching only for interactive UI updates.
 
 ---
 
-# Security Rules
+## Security Rules
 
 * Never expose API keys to the browser
 * Encrypt API keys in database
@@ -371,7 +375,7 @@ Client-side fetching only for interactive UI updates.
 
 ---
 
-# Error Handling
+## Error Handling
 
 * Fail loudly with meaningful errors
 * Store sync errors in Sync History table
@@ -379,7 +383,7 @@ Client-side fetching only for interactive UI updates.
 
 ---
 
-# Provider Template Rules
+## Provider Template Rules
 
 When adding a new provider:
 
@@ -392,7 +396,7 @@ No provider should bypass this system.
 
 ---
 
-# What to Avoid
+## What to Avoid
 
 Do NOT introduce:
 
@@ -408,7 +412,7 @@ Keep architecture direct and transparent.
 
 ---
 
-# Guiding Principle
+## Guiding Principle
 
 If there are multiple valid implementations:
 
@@ -423,7 +427,7 @@ Clarity is more important than extensibility abstractions.
 
 ---
 
-# Future Expansion (Allowed)
+## Future Expansion (Allowed)
 
 The architecture should support future features such as:
 

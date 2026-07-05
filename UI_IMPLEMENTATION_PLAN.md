@@ -1,14 +1,15 @@
 # UI_IMPLEMENTATION_PLAN.md
 
-# AI Token Monitor (ATM) — shadcn/ui Implementation Plan
+## AI Token Monitor (ATM) — shadcn/ui Implementation Plan
 
-This document defines the exact component structure and build order for implementing the ATM dashboard UI using shadcn/ui.
+This document defines the exact component structure and build order for
+implementing the ATM dashboard UI using shadcn/ui.
 
 The goal is to create a **modern, elegant, data-dense observability dashboard**.
 
 ---
 
-# Core UI Architecture
+## Core UI Architecture
 
 ATM UI is structured into 3 layers:
 
@@ -18,23 +19,23 @@ Layout Layer → Page Layer → Component Layer
 
 ---
 
-# 1. Layout System (Foundation)
+## 1. Layout System (Foundation)
 
 ## 1.1 App Shell
 
-### Components used:
+### Components used
 
 * `Sidebar`
 * `Topbar`
 * `MainContent`
 
-### Structure:
+### Structure
 
 ```text id="app-shell"
 [Sidebar] [Main Content Area]
 ```
 
-### Responsibilities:
+### Responsibilities
 
 Sidebar:
 
@@ -52,14 +53,14 @@ Topbar:
 
 ## 1.2 Sidebar (shadcn/ui + custom)
 
-### Components:
+### Components
 
 * `Button`
 * `Separator`
 * `Tooltip`
 * `Avatar` (optional for future multi-user)
 
-### Sections:
+### Sections
 
 * Overview
 * Providers
@@ -67,37 +68,37 @@ Topbar:
 * Usage
 * Settings
 
-### State:
+### State
 
 * active route highlight
 * collapsed mode (optional later)
 
 ---
 
-# 2. Core Dashboard Components
+## 2. Core Dashboard Components
 
 ## 2.1 Metric Cards (Overview KPIs)
 
-### shadcn components:
+### shadcn components
 
 * `Card`
 * `CardHeader`
 * `CardContent`
 
-### Metrics displayed:
+### Metrics displayed
 
 * Total Cost (USD)
 * Tokens Used
 * Active Providers
 * Requests Today
 
-### Layout:
+### Layout
 
 ```text id="metrics-grid"
 [ Card ] [ Card ] [ Card ] [ Card ]
 ```
 
-### Behavior:
+### Behavior
 
 * number animation optional
 * delta indicator (↑ ↓ % change)
@@ -106,13 +107,13 @@ Topbar:
 
 ## 2.2 Provider Status Cards
 
-### Components:
+### Components (2)
 
 * `Card`
 * `Badge`
 * `Progress`
 
-### Shows:
+### Shows
 
 For each provider:
 
@@ -125,21 +126,21 @@ For each provider:
 
 ## 2.3 Usage Chart Panel
 
-### Components:
+### Components (3)
 
 * `Card`
 * `Tabs`
 * `Select`
 * `Chart (Recharts wrapper)`
 
-### Tabs:
+### Tabs
 
 * Daily usage
 * Monthly usage
 * Cost trend
 * Token trend
 
-### Controls:
+### Controls
 
 * provider filter
 * date range selector
@@ -148,14 +149,14 @@ For each provider:
 
 ## 2.4 Model Breakdown Table
 
-### Components:
+### Components (4)
 
 * `Table`
 * `Badge`
 * `DropdownMenu`
 * `Input` (search filter)
 
-### Columns:
+### Columns
 
 * Model name
 * Provider
@@ -164,7 +165,7 @@ For each provider:
 * Total cost
 * Avg cost per request
 
-### Features:
+### Features
 
 * sortable columns
 * searchable models
@@ -172,18 +173,18 @@ For each provider:
 
 ---
 
-# 3. Provider Management UI
+## 3. Provider Management UI
 
 ## 3.1 Provider List Page
 
-### Components:
+### Components (5)
 
 * `Card`
 * `Switch`
 * `Button`
 * `Dialog`
 
-### Each provider card includes:
+### Each provider card includes
 
 * provider name
 * API key status
@@ -195,14 +196,14 @@ For each provider:
 
 ## 3.2 Add Provider Dialog
 
-### Components:
+### Components (6)
 
 * `Dialog`
 * `Select`
 * `Input`
 * `Button`
 
-### Flow:
+### Flow
 
 1. Select provider type
 2. Enter API key
@@ -211,16 +212,16 @@ For each provider:
 
 ---
 
-# 4. Sync System UI
+## 4. Sync System UI
 
 ## 4.1 Sync Button (Global Action)
 
-### Components:
+### Components (7)
 
 * `Button`
 * `Loader`
 
-### Behavior:
+### Behavior (2)
 
 * triggers provider sync
 * shows loading state
@@ -230,12 +231,12 @@ For each provider:
 
 ## 4.2 Sync Log Panel
 
-### Components:
+### Components (8)
 
 * `Table`
 * `Badge`
 
-### Fields:
+### Fields
 
 * provider
 * status
@@ -244,16 +245,16 @@ For each provider:
 
 ---
 
-# 5. Settings Page
+## 5. Settings Page
 
-## Components:
+## Components (9)
 
 * `Card`
 * `Switch`
 * `Select`
 * `Input`
 
-### Settings:
+### Settings
 
 * theme toggle (dark/light)
 * currency selection
@@ -262,11 +263,11 @@ For each provider:
 
 ---
 
-# 6. Supporting UI Components (Reusable)
+## 6. Supporting UI Components (Reusable)
 
 ## 6.1 Loading States
 
-### Components:
+### Components (10)
 
 * `Skeleton`
 
@@ -280,7 +281,7 @@ Used for:
 
 ## 6.2 Empty States
 
-### Components:
+### Components (11)
 
 * `Card`
 * icon (Lucide)
@@ -296,7 +297,7 @@ Used when:
 
 ## 6.3 Toast Notifications
 
-### Component:
+### Component
 
 * `Toast`
 * `useToast`
@@ -312,7 +313,7 @@ Events:
 
 ## 6.4 Theme Toggle
 
-### Components:
+### Components (12)
 
 * `DropdownMenu`
 * `Switch`
@@ -324,22 +325,22 @@ Behavior:
 
 ---
 
-# 7. Data Visualization Layer
+## 7. Data Visualization Layer
 
 ## Chart Wrapper Component
 
-### File:
+### File
 
 ```text id="chart-wrapper"
 /components/charts/UsageChart.tsx
 ```
 
-### Uses:
+### Uses
 
 * Recharts
 * theme-aware colors
 
-### Charts:
+### Charts
 
 * Line chart (cost over time)
 * Bar chart (provider comparison)
@@ -347,7 +348,7 @@ Behavior:
 
 ---
 
-# 8. Component Hierarchy
+## 8. Component Hierarchy
 
 ```text id="component-tree"
 App
@@ -378,9 +379,9 @@ App
 
 ---
 
-# 9. Component Design Rules
+## 9. Component Design Rules
 
-## DO:
+## DO
 
 * reuse shadcn components
 * keep components small (<250–300 lines)
@@ -389,7 +390,7 @@ App
 
 ---
 
-## DON'T:
+## DON'T
 
 * build custom UI libraries
 * duplicate Card/Table logic
@@ -398,7 +399,7 @@ App
 
 ---
 
-# 10. UI Performance Rules
+## 10. UI Performance Rules
 
 * prefer server components for data-heavy views
 * avoid client-side fetching for tables
@@ -407,7 +408,7 @@ App
 
 ---
 
-# 11. Theme Integration Rule
+## 11. Theme Integration Rule
 
 All components MUST support:
 
@@ -418,7 +419,7 @@ No component may hardcode colors.
 
 ---
 
-# 12. Build Order (IMPORTANT)
+## 12. Build Order (IMPORTANT)
 
 Implement in this order:
 
@@ -434,7 +435,7 @@ Implement in this order:
 
 ---
 
-# Guiding Principle
+## Guiding Principle
 
 UI is not decoration.
 

@@ -1,14 +1,16 @@
 # OPENODE_BUILD_AGENT.md
 
-# AI Token Monitor (ATM) — Full Build Agent Instructions
+## AI Token Monitor (ATM) — Full Build Agent Instructions
 
-This document defines how an AI coding agent (OpenCode) must build the AI Token Monitor (ATM) project from scratch.
+This document defines how an AI coding agent (OpenCode) must build the AI Token
+Monitor (ATM) project from scratch.
 
-The goal is to generate a fully working, self-hostable application using a strict minimal architecture.
+The goal is to generate a fully working, self-hostable application using a
+strict minimal architecture.
 
 ---
 
-# Project Summary
+## Project Summary
 
 ATM (AI Token Monitor) is a local-first dashboard that:
 
@@ -28,7 +30,7 @@ It is:
 
 ---
 
-# Hard Constraints (DO NOT VIOLATE)
+## Hard Constraints (DO NOT VIOLATE)
 
 ## Architecture
 
@@ -72,7 +74,7 @@ It is:
 
 ---
 
-# Core Architecture
+## Core Architecture
 
 ```text id="architecture"
 Next.js App Router
@@ -86,7 +88,7 @@ SQLite (better-sqlite3)
 
 ---
 
-# Database Schema (MANDATORY)
+## Database Schema (MANDATORY)
 
 Agent MUST implement EXACT schema from:
 
@@ -105,7 +107,7 @@ No additional tables unless explicitly approved.
 
 ---
 
-# Provider System (MANDATORY)
+## Provider System (MANDATORY)
 
 Agent MUST implement:
 
@@ -148,7 +150,7 @@ ALL providers MUST output:
 
 ---
 
-# Build Phases
+## Build Phases
 
 Agent MUST execute in strict order.
 
@@ -272,7 +274,7 @@ Output:
 
 ---
 
-# UI Requirements
+## UI Requirements
 
 Design must be:
 
@@ -288,7 +290,7 @@ Design must be:
 
 ---
 
-# Component Rules
+## Component Rules
 
 * Keep components small (<300 lines)
 * Avoid deep nesting
@@ -297,7 +299,7 @@ Design must be:
 
 ---
 
-# State Management Rules
+## State Management Rules
 
 * Prefer Server Components
 * Avoid Redux
@@ -305,7 +307,7 @@ Design must be:
 
 ---
 
-# SQL Rules
+## SQL Rules
 
 * ALL SQL must be explicit
 * NO ORM
@@ -314,7 +316,7 @@ Design must be:
 
 ---
 
-# Error Handling
+## Error Handling
 
 * Never silently fail
 * Log sync errors into sync_log table
@@ -322,7 +324,7 @@ Design must be:
 
 ---
 
-# Performance Rules
+## Performance Rules
 
 * Use aggregated tables for charts
 * Avoid querying raw usage_records for dashboards
@@ -330,7 +332,7 @@ Design must be:
 
 ---
 
-# Security Rules
+## Security Rules
 
 * API keys must be encrypted in DB
 * Never expose keys to client
@@ -338,7 +340,7 @@ Design must be:
 
 ---
 
-# Definition of Done (MVP)
+## Definition of Done (MVP)
 
 MVP is complete when:
 
@@ -353,7 +355,7 @@ MVP is complete when:
 
 ---
 
-# Post-MVP (DO NOT BUILD YET)
+## Post-MVP (DO NOT BUILD YET)
 
 * forecasting
 * anomaly detection
@@ -364,7 +366,7 @@ MVP is complete when:
 
 ---
 
-# Guiding Principle
+## Guiding Principle
 
 This project must remain:
 

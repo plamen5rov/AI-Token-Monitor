@@ -1,14 +1,16 @@
 # SKILL.md
 
-# AI Token Monitor (ATM) – Provider Skills & API Map
+## AI Token Monitor (ATM) – Provider Skills & API Map
 
-This document defines supported AI providers, their API structure patterns, and how they are normalized inside ATM.
+This document defines supported AI providers, their API structure patterns, and
+how they are normalized inside ATM.
 
-ATM is a provider-agnostic analytics system. All providers are wrapped into a unified interface regardless of underlying API differences.
+ATM is a provider-agnostic analytics system. All providers are wrapped into a
+unified interface regardless of underlying API differences.
 
 ---
 
-# Core Concept
+## Core Concept
 
 Every provider is treated as a **Skill Provider**:
 
@@ -24,7 +26,7 @@ All providers are normalized into a single internal schema.
 
 ---
 
-# Standard Provider Interface
+## Standard Provider Interface
 
 Every provider adapter MUST implement:
 
@@ -43,7 +45,7 @@ interface ProviderSkill {
 
 ---
 
-# Common API Patterns (Across Providers)
+## Common API Patterns (Across Providers)
 
 Most AI providers fall into 3 categories:
 
@@ -60,18 +62,18 @@ Used by:
 * Fireworks AI
 * many self-hosted gateways
 
-### Key characteristics:
+### Key characteristics
 
 * Base URL style:
 
-```
+```text
 /v1/chat/completions
 /v1/models
 ```
 
 * Auth:
 
-```
+```text
 Authorization: Bearer <API_KEY>
 ```
 
@@ -87,13 +89,13 @@ Authorization: Bearer <API_KEY>
 
 * Model format:
 
-```
+```text
 gpt-4o
 claude-3.5-sonnet (via router)
 llama-3.1-70b
 ```
 
-### Notes:
+### Notes
 
 This is the easiest group to normalize.
 
@@ -107,11 +109,11 @@ Used by:
 * Claude models
 * some hybrid gateways
 
-### Key characteristics:
+### Key characteristics (2)
 
 * Endpoint:
 
-```
+```text
 /v1/messages
 ```
 
@@ -133,7 +135,7 @@ Used by:
 }
 ```
 
-### Important:
+### Important
 
 Token fields are split (input/output), not unified.
 
@@ -146,7 +148,7 @@ Used by:
 * Google AI Studio
 * Vertex AI
 
-### Key characteristics:
+### Key characteristics (3)
 
 * Endpoint is region-based or project-based
 
@@ -157,7 +159,7 @@ Used by:
 
 * Model format:
 
-```
+```text
 gemini-1.5-pro
 gemini-1.5-flash
 ```
@@ -168,7 +170,7 @@ gemini-1.5-flash
   * delayed
   * or only available in billing APIs
 
-### Important:
+### Important (2)
 
 Google often separates:
 
@@ -184,7 +186,7 @@ Used by:
 * OpenRouter
 * similar “AI gateways”
 
-### Key characteristics:
+### Key characteristics (4)
 
 * One API key → many providers
 * unified endpoint
@@ -192,13 +194,13 @@ Used by:
 
 Example:
 
-```
+```text
 model: "anthropic/claude-3-opus"
 model: "openai/gpt-4o"
 model: "meta/llama-3.1"
 ```
 
-### Usage:
+### Usage
 
 Always includes:
 
@@ -215,7 +217,7 @@ Always includes:
 
 ---
 
-# Normalized Internal ATM Schema
+## Normalized Internal ATM Schema
 
 All providers MUST be normalized into:
 
@@ -234,7 +236,7 @@ type NormalizedUsage = {
 
 ---
 
-# Provider Skill Requirements
+## Provider Skill Requirements
 
 A provider is valid ONLY if it supports at least:
 
@@ -248,7 +250,7 @@ If any are missing:
 
 ---
 
-# Special Handling Rules
+## Special Handling Rules
 
 ## OpenRouter
 
@@ -274,7 +276,7 @@ If any are missing:
 
 ---
 
-# Extension Rule
+## Extension Rule
 
 Adding a new provider MUST follow:
 
@@ -288,7 +290,7 @@ No exceptions.
 
 ---
 
-# Guiding Principle
+## Guiding Principle
 
 Never let provider differences leak into UI or database schema.
 
