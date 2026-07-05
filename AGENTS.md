@@ -47,6 +47,29 @@ Avoid overengineering.
 
 ---
 
+## Agent Workflow Rules
+
+When building ATM, the agent MUST follow these rules on every session:
+
+1. **Detect and resolve inconsistencies**
+   The pre-planning docs (`docs/`) are a starting point, not immutable truth.
+   When the agent finds contradictions, outdated assumptions, or implementation
+   choices that no longer fit reality, it MUST point them out and ask the user
+   for a final verdict before proceeding.
+
+2. **Keep docs in sync with decisions**
+   Once a decision is made, update `AGENTS.md` and any other relevant spec
+   documents so the project's documented plans match the current direction.
+   `AGENTS.md` remains the source of truth.
+
+3. **Log every change**
+   Maintain `DONE.md` at the repo root. After every meaningful change (or at
+   least after every commit), append a dated entry describing what changed and
+   which files were affected. This log is the primary trail for reversing or
+   revisiting steps in future sessions.
+
+---
+
 ## Tech Stack
 
 ## Framework

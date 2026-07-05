@@ -63,6 +63,29 @@ The system must normalize all provider data into a unified internal schema.
 
 ---
 
+## WORKFLOW RULES
+
+The agent MUST follow these rules on every session:
+
+1. **Detect and resolve inconsistencies**
+   Pre-planning docs are a starting point, not immutable truth. When the agent
+   finds contradictions, outdated assumptions, or implementation choices that
+   no longer fit reality, it MUST point them out and ask the user for a final
+   verdict before proceeding.
+
+2. **Keep docs in sync with decisions**
+   Once a decision is made, update `AGENTS.md` and any other relevant spec
+   documents so documented plans match the current direction. `AGENTS.md`
+   overrides all other docs.
+
+3. **Log every change**
+   Maintain `DONE.md` at the repo root. After every meaningful change (or at
+   least after every commit), append a dated entry describing what changed and
+   which files were affected. This log is the primary trail for reversing or
+   revisiting steps in future sessions.
+
+---
+
 ## 2. ARCHITECTURE MODEL
 
 Use this strict data flow:
