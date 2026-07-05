@@ -1,4 +1,4 @@
-import { closeDb, getDb } from "@/database"
+import { closeDb } from "@/database"
 import { runMigrations } from "@/database/migrate"
 import {
   createProvider,
@@ -7,7 +7,6 @@ import {
   getProviderById,
   updateProvider,
   createModel,
-  getModelByName,
   createUsageRecord,
   rebuildUsageDaily,
   getDashboardTotals,
@@ -16,8 +15,6 @@ import {
 import { encrypt, decrypt } from "@/lib/crypto"
 import { createAdapter } from "@/providers"
 import { PROVIDER_TEMPLATES, getTemplate } from "@/templates"
-import { syncProvider } from "@/lib/sync"
-import type { Provider } from "@/types"
 
 const DB_PATH = "/tmp/atm-test-phase6.sqlite"
 process.env.DATABASE_PATH = DB_PATH

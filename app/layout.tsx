@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AppShell } from "@/components/app-shell"
+import { Toaster } from "@/components/toaster"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,8 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <AppShell>{children}</AppShell>
+<AppShell>{children}</AppShell>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import { Plus, X } from "lucide-react"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { addProviderAction } from "@/app/actions/providers"
@@ -16,53 +18,47 @@ type TemplateInfo = {
 }
 
 export function ProviderForm({ templates }: { templates: TemplateInfo[] }) {
+  const router = useRouter()
   const [open, setOpen] = React.useState(false)
   const [type, setType] = React.useState(templates[0]?.type ?? "")
   const [name, setName] = React.useState("")
   const [apiKey, setApiKey] = React.useState("")
   const [isPending, startTransition] = React.useTransition()
-  const [message, setMessage] = React.useState<string | null>(null)
-  const [error, setError] = React.useState<string | null>(null)
 
   const selected = templates.find((t) => t.type === type)
 
   function handleOpen() {
     setOpen(true)
-    setMessage(null)
-    setError(null)
   }
 
   function handleClose() {
     setOpen(false)
     setName("")
     setApiKey("")
-    setMessage(null)
-    setError(null)
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError(null)
-    setMessage(null)
 
     if (!name.trim()) {
-      setError("Provider name is required.")
+      toast.error("Provider name is required.")
       return
     }
     if (!apiKey.trim()) {
-      setError("API key is required.")
+      toast.error("API key is required.")
       return
     }
 
     startTransition(async () => {
       const res = await addProviderAction(type, name, apiKey)
       if (res.success) {
-        setMessage(res.message)
+        toast.success(res.message)
         setName("")
         setApiKey("")
         setOpen(false)
+        router.refresh()
       } else {
-        setError(res.message)
+        toast.error(res.message)
       }
     })
   }
@@ -149,13 +145,6 @@ export function ProviderForm({ templates }: { templates: TemplateInfo[] }) {
             Stored encrypted in the local database. Never sent to the browser.
           </p>
         </div>
-
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
-        {message && (
-          <p className="text-sm text-emerald-500">{message}</p>
-        )}
 
         <div className="flex items-center gap-3">
           <Button type="submit" variant="default" size="sm" disabled={isPending}>

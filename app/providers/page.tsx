@@ -111,7 +111,7 @@ export default function ProvidersPage() {
                   </p>
                 </div>
               </div>
-              <ProviderActions providerId={p.id} isActive={p.is_active === 1} />
+              <ProviderActions providerId={p.id} providerName={p.name} isActive={p.is_active === 1} />
             </div>
           ))}
         </div>
