@@ -15,3 +15,9 @@ Changelog for the AI Token Monitor (ATM) project.
 ## Phase 1 — Project Foundation
 
 - [2026-07-05] Initialized Next.js 16 + TypeScript + Tailwind CSS v4 project at repo root; installed shadcn/ui (base-nova preset), `better-sqlite3`, and `next-themes`; created base folder structure (`app/`, `components/`, `lib/`, `providers/`, `templates/`, `database/`, `migrations/`, `types/`); built sidebar/top navigation shell with dark-mode-default theme toggle; verified clean production build with no TypeScript errors (files modified: .gitignore, package.json, package-lock.json, tsconfig.json, next.config.ts, postcss.config.mjs, eslint.config.mjs, app/layout.tsx, app/page.tsx, app/globals.css, components/theme-provider.tsx, components/theme-toggle.tsx, components/app-shell.tsx, components/ui/button.tsx, lib/utils.ts, components.json; directories created: app, components, lib, providers, templates, database, migrations, types)
+
+---
+
+## Phase 2 — Database Layer
+
+- [2026-07-05] Implemented SQLite database layer using `better-sqlite3`: created migration runner, initial schema SQL for all 6 tables, connection module with WAL and foreign keys, TypeScript entity types, and CRUD helpers for providers/models/usage records/settings; verified initialization and CRUD operations with `scripts/verify-db.ts`; installed `@types/better-sqlite3` and `tsx` dev dependencies (files modified: package.json, package-lock.json, database/index.ts, database/migrate.ts, migrations/001_initial_schema.sql, lib/db.ts, types/index.ts, scripts/verify-db.ts, DONE.md)
