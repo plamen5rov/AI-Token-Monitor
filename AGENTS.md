@@ -73,6 +73,12 @@ When building ATM, the agent MUST follow these rules on every session:
    Design system docs (colors, spacing, components) are starting points. The
    actual UI is tuned once a working app is visible, not from `.md` files alone.
 
+5. **Maintain an error log**
+   Every project must have an `ERROR-LOG.md` at root. Read it at session start.
+   Log every mistake, bug, or unexpected error with: date, mistake, root cause,
+   fix, and lesson learned. This builds a shared knowledge base for future
+   sessions.
+
 ---
 
 ## Tech Stack
