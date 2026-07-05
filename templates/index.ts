@@ -50,6 +50,19 @@ export const PROVIDER_TEMPLATES: ProviderTemplate[] = [
     supportsModels: true,
     supportsUsage: true,
   },
+  {
+    type: "nvidia",
+    displayName: "NVIDIA NIM",
+    description:
+      "Llama, Nemotron, and other models via NVIDIA NIM. Tracks the model registry only — NIM has no public usage endpoint, so cost/token usage is not fetched.",
+    baseUrl: "https://integrate.api.nvidia.com/v1",
+    authMethod: "bearer",
+    apiKeyPrefix: "nvapi-",
+    apiKeyLabel: "API Key",
+    apiKeyHelpUrl: "https://build.nvidia.com/",
+    supportsModels: true,
+    supportsUsage: false,
+  },
 ]
 
 export function getTemplate(type: string): ProviderTemplate | undefined {

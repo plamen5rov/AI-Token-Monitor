@@ -23,6 +23,8 @@ function typeBadgeClass(type: string): string {
       return "bg-orange-500/10 text-orange-500 border-orange-500/20"
     case "openrouter":
       return "bg-blue-500/10 text-blue-500 border-blue-500/20"
+    case "nvidia":
+      return "bg-lime-500/10 text-lime-600 border-lime-500/20"
     default:
       return "bg-muted text-muted-foreground border-border"
   }
@@ -31,6 +33,7 @@ function typeBadgeClass(type: string): string {
 export default function ProvidersPage() {
   const providers = getProviders()
   const templateDisplayName = new Map(PROVIDER_TEMPLATES.map((t) => [t.type, t.displayName]))
+  const templateSupportsUsage = new Map(PROVIDER_TEMPLATES.map((t) => [t.type, t.supportsUsage]))
 
   const templatesForUI = PROVIDER_TEMPLATES.map((t) => ({
     type: t.type,
@@ -105,6 +108,14 @@ export default function ProvidersPage() {
                     >
                       {p.is_active === 1 ? "Active" : "Disabled"}
                     </span>
+                    {templateSupportsUsage.get(p.type) === false && (
+                      <span
+                        title="This provider has no public usage endpoint. Sync will refresh the model list only; token/cost data is not fetched."
+                        className="inline-flex items-center rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600"
+                      >
+                        Models only
+                      </span>
+                    )}
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
                     Last sync: {formatTimestamp(p.last_sync)}

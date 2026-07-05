@@ -1,22 +1,40 @@
 # AI Token Monitor (ATM)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D22-green.svg)](https://nodejs.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org)
+
 A self-hostable dashboard for tracking usage, costs, and model-level analytics
 across multiple AI API providers.
 
 ATM gives you a single pane of glass to monitor how much you're spending on
 OpenAI, Anthropic, and OpenRouter — with per-model cost breakdowns, token usage
-trends, and sync history.
+trends, and sync history. NVIDIA NIM is supported as a model-registry-only
+provider (usage analytics are not exposed by NVIDIA's API). All data is stored
+locally in SQLite; API keys are encrypted at rest and never sent to the browser.
+
+<!-- TODO: add dashboard screenshots -->
+<!-- Recommended: one overview screenshot + one per-page screenshot (Providers, Models, Usage, Sync, Settings) -->
+<!-- Store in docs/images/ and reference with relative paths, e.g. ![Overview](./docs/images/overview.png) -->
 
 ## Features
 
-- **Multi-provider support** — OpenAI, Anthropic, and OpenRouter adapters
+- **Multi-provider support** — OpenAI, Anthropic, OpenRouter, and NVIDIA NIM
+  adapters (NVIDIA NIM is model-registry-only; see
+  [Provider Support](#provider-support) for details)
 - **Unified dashboard** — total cost, token usage, requests, active providers
 - **Cost & token trends** — daily and monthly charts powered by Recharts
 - **Per-model breakdown** — see which models cost the most
+- **Models page** — full model registry with pricing, context window, and
+  aggregated usage across all providers
+- **Usage page** — detailed per-model token and cost breakdown with KPI cards,
+  charts, and a sortable table with totals footer
+- **Settings page** — configure refresh interval and display currency
 - **Provider management** — add, enable/disable, health-check, and delete
   providers through the UI
 - **Encrypted API keys** — AES-256-GCM encryption, server-side only
-- **Sync engine** — manual sync with dedupe protection and sync history
+- **Sync engine** — manual sync with dedupe protection and full sync history
 - **Dark mode first** — clean, modern dashboard UX with light/dark toggle
 
 ## Tech Stack
@@ -66,6 +84,13 @@ Add it to `.env.local`:
 ENCRYPTION_KEY=your-generated-key-here
 ```
 
+#### Environment variables
+
+| Variable | Purpose | Required | Default |
+|----------|---------|----------|---------|
+| `ENCRYPTION_KEY` | 32-byte hex key for AES-256-GCM encryption of API keys | Yes (for production) | Dev fallback (with warning) |
+| `DATABASE_PATH` | Path to the SQLite database file | No | `atm.sqlite` |
+
 > If `ENCRYPTION_KEY` is not set, ATM uses a default key and prints a warning.
 > This is fine for local development but **not secure** for real API keys.
 
@@ -84,13 +109,33 @@ npm run build
 npm run start
 ```
 
+## Dashboard Pages
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Overview | `/` | KPI cards, cost/token trends, provider/model breakdowns, recent activity |
+| Providers | `/providers` | Manage provider connections — add, sync, health-check, toggle, delete |
+| Models | `/models` | Per-model pricing and usage table across all providers |
+| Usage | `/usage` | Detailed per-model token/cost breakdown with KPI cards, charts, totals |
+| Sync | `/sync` | View sync history and trigger syncs |
+| Settings | `/settings` | Configure refresh interval and display currency |
+
 ## Adding a Provider
 
 1. Navigate to **Providers** in the sidebar.
 2. Click **Add Provider**.
-3. Select a provider type (OpenAI, Anthropic, or OpenRouter).
+3. Select a provider type (OpenAI, Anthropic, OpenRouter, or NVIDIA NIM).
 4. Enter a display name and your API key.
 5. Click **Add Provider**.
+
+### Provider Support
+
+| Provider | Models | Usage | Cost | Notes |
+|----------|:------:|:-----:|:----:|-------|
+| OpenAI | ✓ | ✓ | ✓ | Requires Admin key (`sk-admin-...`) |
+| Anthropic | ✓ | ✓ | ✓ | Requires Admin key (`sk-ant-admin01-...`) |
+| OpenRouter | ✓ | ✓ | ✓ | Requires Management key (`sk-or-...`) |
+| NVIDIA NIM | ✓ | — | — | Inference-only API; no public usage endpoint. Sync refreshes the model list but does not fetch token/cost data. |
 
 ### API Key Requirements
 
@@ -99,15 +144,12 @@ npm run start
 | OpenAI | **Admin** API key (`sk-admin-...`) | [platform.openai.com/settings/organization/admin-keys](https://platform.openai.com/settings/organization/admin-keys) |
 | Anthropic | **Admin** API key (`sk-ant-admin01-...`) | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) |
 | OpenRouter | **Management** API key (`sk-or-...`) | [openrouter.ai/keys](https://openrouter.ai/keys) |
+| NVIDIA NIM | API key (`nvapi-...`) | [build.nvidia.com](https://build.nvidia.com/) |
 
-> All three providers require admin/management keys — standard API keys
-> cannot access usage/billing endpoints and will return 403 Forbidden.
-
-> Anthropic requires an Admin API key (not a standard API key) to access the
-> Usage & Cost Admin API.
-
-> OpenRouter requires a Management API key to access the activity/usage
-> endpoints.
+> OpenAI, Anthropic, and OpenRouter require admin/management keys — standard API
+> keys cannot access usage/billing endpoints and will return **403 Forbidden**.
+> NVIDIA NIM accepts a standard API key for the models endpoint; no admin key
+> is needed because usage analytics are not exposed.
 
 ## Usage
 
@@ -116,14 +158,88 @@ npm run start
 - Click **Sync All** in the top bar to sync all active providers.
 - Or use the **Sync** button on individual providers in the Providers page.
 - ATM fetches the last 30 days of usage data on each sync.
-- Re-syncing the same day replaces (not duplicates) the data.
+- Re-syncing the same day replaces (not duplicates) the data — the sync engine
+  deduplicates by `provider_id + model_id + timestamp`.
 
-### Dashboard
+## Architecture & Data Flow
 
-- **Overview** — KPI cards, cost/token trends, provider/model breakdowns,
-  recent activity
-- **Providers** — manage provider connections
-- **Sync** — view sync history and trigger syncs
+```
+Next.js App Router
+    ↓
+Server Actions / Route Handlers
+    ↓
+Provider Adapters (fetchModels, fetchUsage, healthCheck)
+    ↓
+SQLite (better-sqlite3)
+```
+
+All data in ATM follows one strict pipeline:
+
+```
+Provider API → Adapter → Normalizer → Database → Aggregator → UI
+```
+
+No UI component is allowed to bypass this flow. No separate backend. No
+microservices. No ORM. All provider API calls happen server-side. API keys are
+encrypted at rest and never sent to the browser.
+
+## Database
+
+ATM uses a single SQLite file (`atm.sqlite` by default) with six tables:
+
+- `providers` — provider connections with encrypted API keys
+- `models` — model metadata and pricing per provider
+- `usage_records` — raw usage buckets (deduplicated by provider+model+timestamp)
+- `usage_daily` — pre-aggregated daily totals for fast dashboard queries
+- `sync_log` — sync run history with status and error messages
+- `settings` — key-value settings store
+
+Migrations run automatically on startup.
+
+> **Reset the database:** Delete the `atm.sqlite*` files and restart the app.
+> A fresh schema will be created on the next launch.
+
+## Troubleshooting
+
+### 403 Forbidden when syncing
+
+All three providers require **admin/management** API keys — standard API keys
+cannot access usage/billing endpoints. See the
+[API Key Requirements](#api-key-requirements) table above to create the correct
+key type for your provider.
+
+### `ByteString` / non-Latin-1 character error when syncing
+
+The API key pasted from a web page likely contains invisible Unicode characters
+(zero-width spaces `U+200B–U+200F`, BOM `U+FEFF`, non-breaking spaces `U+00A0`).
+HTTP headers must be Latin-1 (0–255), so `fetch()` rejects them. ATM
+automatically strips these characters on save — if you hit this with an older
+build, delete the provider and re-add the key, or update to the latest commit.
+
+### `FOREIGN KEY constraint failed` when deleting a provider
+
+Providers have child rows in `models`, `usage_records`, `usage_daily`, and
+`sync_log`. The latest `deleteProvider()` removes child rows in a transaction
+before deleting the provider. If you hit this, update to the latest commit and
+restart the dev server (the running server may still hold an old DB handle).
+
+### `ReferenceError: SyncResult is not defined` when adding a provider
+
+This was caused by an invalid `export type { SyncResult }` re-export in a
+`"use server"` file. Fixed in the latest commit — update your local copy.
+
+### Dark Reader console warnings (hydration mismatch)
+
+The Dark Reader browser extension injects inline styles into SVG icons before
+React hydrates, causing a dev-only hydration warning. This is harmless —
+disable Dark Reader on `localhost` or ignore the warning in development.
+
+### `NOT NULL constraint failed: usage_records.timestamp`
+
+A provider returned a usage item with a missing or invalid date field.
+The OpenRouter adapter now skips items with missing dates, and the sync engine
+adds a defensive `Number.isFinite(timestamp)` check before inserting. Update to
+the latest commit if you hit this.
 
 ## Project Structure
 
@@ -140,35 +256,6 @@ scripts/          # Verification scripts
 docs/             # Architecture and design documentation
 ```
 
-## Architecture
-
-```
-Next.js App Router
-    ↓
-Server Actions / Route Handlers
-    ↓
-Provider Adapters (fetchModels, fetchUsage, healthCheck)
-    ↓
-SQLite (better-sqlite3)
-```
-
-No separate backend. No microservices. No ORM. All provider API calls happen
-server-side. API keys are encrypted at rest and never sent to the browser.
-
-## Database
-
-ATM uses a single SQLite file (`atm.sqlite` by default) with six tables:
-
-- `providers` — provider connections with encrypted API keys
-- `models` — model metadata and pricing per provider
-- `usage_records` — raw usage buckets (deduplicated by provider+model+timestamp)
-- `usage_daily` — pre-aggregated daily totals for fast dashboard queries
-- `sync_log` — sync run history with status and error messages
-- `settings` — key-value settings store
-
-Migrations run automatically on startup. To reset the database, delete the
-`atm.sqlite*` files and restart the app.
-
 ## Verification Scripts
 
 Each phase has a verification script that seeds test data and runs assertions:
@@ -183,4 +270,4 @@ npx tsx scripts/verify-providers-phase6.ts
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE) for details.

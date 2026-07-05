@@ -2,6 +2,7 @@ import { BaseProvider } from "./base"
 import { OpenAIProvider } from "./openai"
 import { AnthropicProvider } from "./anthropic"
 import { OpenRouterProvider } from "./openrouter"
+import { NvidiaProvider } from "./nvidia"
 import type { Provider } from "@/types"
 
 export function createAdapter(provider: Provider): BaseProvider {
@@ -12,6 +13,8 @@ export function createAdapter(provider: Provider): BaseProvider {
       return new AnthropicProvider(provider)
     case "openrouter":
       return new OpenRouterProvider(provider)
+    case "nvidia":
+      return new NvidiaProvider(provider)
     default:
       throw new Error(`Unsupported provider type: ${provider.type}`)
   }
