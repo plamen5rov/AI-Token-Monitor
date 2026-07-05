@@ -95,7 +95,7 @@ async function syncUsage(adapter: BaseProvider, providerId: string): Promise<num
       input_tokens: record.inputTokens,
       output_tokens: record.outputTokens,
       cost_usd: cost,
-      request_count: 1,
+      request_count: record.requestCount || 1,
       raw_payload: null,
     })
     count++

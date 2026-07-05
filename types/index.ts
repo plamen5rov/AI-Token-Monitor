@@ -45,6 +45,7 @@ export type NormalizedUsageRecord = {
   inputTokens: number
   outputTokens: number
   costUSD: number
+  requestCount?: number
 }
 
 export type UsageDaily = {

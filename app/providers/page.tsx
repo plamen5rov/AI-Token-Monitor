@@ -1,0 +1,121 @@
+import { getProviders } from "@/lib/db"
+import { PROVIDER_TEMPLATES } from "@/templates"
+import { ProviderForm } from "@/components/provider-form"
+import { ProviderActions } from "@/components/provider-actions"
+
+export const dynamic = "force-dynamic"
+
+function formatTimestamp(ms: number | null): string {
+  if (!ms) return "Never"
+  return new Date(ms).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
+function typeBadgeClass(type: string): string {
+  switch (type) {
+    case "openai":
+      return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+    case "anthropic":
+      return "bg-orange-500/10 text-orange-500 border-orange-500/20"
+    case "openrouter":
+      return "bg-blue-500/10 text-blue-500 border-blue-500/20"
+    default:
+      return "bg-muted text-muted-foreground border-border"
+  }
+}
+
+export default function ProvidersPage() {
+  const providers = getProviders()
+  const templateDisplayName = new Map(PROVIDER_TEMPLATES.map((t) => [t.type, t.displayName]))
+
+  const templatesForUI = PROVIDER_TEMPLATES.map((t) => ({
+    type: t.type,
+    displayName: t.displayName,
+    description: t.description,
+    apiKeyLabel: t.apiKeyLabel,
+    apiKeyPrefix: t.apiKeyPrefix,
+    apiKeyHelpUrl: t.apiKeyHelpUrl,
+  }))
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Providers</h2>
+          <p className="text-muted-foreground">
+            Add, configure, and manage your AI provider connections.
+          </p>
+        </div>
+        <ProviderForm templates={templatesForUI} />
+      </div>
+
+      {providers.length === 0 ? (
+        <div className="rounded-xl border border-border bg-card p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            No providers configured yet. Click <span className="font-medium text-foreground">Add Provider</span> to get started.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            {PROVIDER_TEMPLATES.map((t) => (
+              <div
+                key={t.type}
+                className="rounded-lg border border-border bg-background p-4 text-left"
+              >
+                <div className="mb-1 flex items-center gap-2">
+                  <span
+                    className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium ${typeBadgeClass(
+                      t.type
+                    )}`}
+                  >
+                    {t.displayName}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground max-w-xs">{t.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {providers.map((p) => (
+            <div
+              key={p.id}
+              className="flex items-center justify-between rounded-xl border border-border bg-card p-4"
+            >
+              <div className="flex items-center gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{p.name}</span>
+                    <span
+                      className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium ${typeBadgeClass(
+                        p.type
+                      )}`}
+                    >
+                      {templateDisplayName.get(p.type) ?? p.type}
+                    </span>
+                    <span
+                      className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium ${
+                        p.is_active === 1
+                          ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                          : "bg-muted text-muted-foreground border-border"
+                      }`}
+                    >
+                      {p.is_active === 1 ? "Active" : "Disabled"}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Last sync: {formatTimestamp(p.last_sync)}
+                  </p>
+                </div>
+              </div>
+              <ProviderActions providerId={p.id} isActive={p.is_active === 1} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

@@ -95,6 +95,7 @@ export class OpenAIProvider extends BaseProvider {
           inputTokens: result.input_tokens || 0,
           outputTokens: result.output_tokens || 0,
           costUSD: 0,
+          requestCount: result.num_model_requests || 1,
         })
       }
     }
