@@ -10,9 +10,12 @@ across multiple AI API providers.
 
 ATM gives you a single pane of glass to monitor how much you're spending on
 OpenAI, Anthropic, and OpenRouter — with per-model cost breakdowns, token usage
-trends, and sync history. NVIDIA NIM is supported as a model-registry-only
-provider (usage analytics are not exposed by NVIDIA's API). All data is stored
-locally in SQLite; API keys are encrypted at rest and never sent to the browser.
+trends, and sync history. Eleven additional providers (NVIDIA NIM, Google AI
+Studio, Groq, Mistral, Together AI, DeepSeek, Fireworks AI, Perplexity,
+DeepInfra, Anyscale, xAI) are supported as model-registry-only — they don't
+expose public REST usage analytics, but ATM keeps their model lists in sync.
+All data is stored locally in SQLite; API keys are encrypted at rest and never
+sent to the browser.
 
 <!-- TODO: add dashboard screenshots -->
 <!-- Recommended: one overview screenshot + one per-page screenshot (Providers, Models, Usage, Sync, Settings) -->
@@ -20,9 +23,13 @@ locally in SQLite; API keys are encrypted at rest and never sent to the browser.
 
 ## Features
 
-- **Multi-provider support** — OpenAI, Anthropic, OpenRouter, and NVIDIA NIM
-  adapters (NVIDIA NIM is model-registry-only; see
-  [Provider Support](#provider-support) for details)
+- **Multi-provider support** — 14 pre-defined provider templates: OpenAI,
+  Anthropic, OpenRouter (full usage tracking), NVIDIA NIM, Google AI Studio,
+  Groq, Mistral, Together AI, DeepSeek, Fireworks AI, Perplexity, DeepInfra,
+  Anyscale, and xAI (model registry only). See
+  [Provider Support](#provider-support) for the full matrix and
+  [Adding OpenAI-Compatible Providers](#adding-openai-compatible-providers) for
+  how to add more.
 - **Unified dashboard** — total cost, token usage, requests, active providers
 - **Cost & token trends** — daily and monthly charts powered by Recharts
 - **Per-model breakdown** — see which models cost the most
@@ -135,7 +142,17 @@ npm run start
 | OpenAI | ✓ | ✓ | ✓ | Requires Admin key (`sk-admin-...`) |
 | Anthropic | ✓ | ✓ | ✓ | Requires Admin key (`sk-ant-admin01-...`) |
 | OpenRouter | ✓ | ✓ | ✓ | Requires Management key (`sk-or-...`) |
-| NVIDIA NIM | ✓ | — | — | Inference-only API; no public usage endpoint. Sync refreshes the model list but does not fetch token/cost data. |
+| NVIDIA NIM | ✓ | — | — | OpenAI-compatible. Sync refreshes the model list only. |
+| Google AI Studio | ✓ | — | — | Gemini API. Analytics at aistudio.google.com/usage. Sync refreshes the model list only. |
+| Groq | ✓ | — | — | OpenAI-compatible. LPU inference for Llama, Mixtral, etc. |
+| Mistral | ✓ | — | — | OpenAI-compatible. Usage at console.mistral.ai/usage. |
+| Together AI | ✓ | — | — | OpenAI-compatible. 200+ open-source models. |
+| DeepSeek | ✓ | — | — | OpenAI-compatible. DeepSeek-V3, R1, Qwen. |
+| Fireworks AI | ✓ | — | — | OpenAI-compatible. Serverless open-source models. |
+| Perplexity | ✓ | — | — | OpenAI-compatible. Sonar online models. |
+| DeepInfra | ✓ | — | — | OpenAI-compatible. Open-source models. |
+| Anyscale | ✓ | — | — | OpenAI-compatible. Llama, Mistral, etc. |
+| xAI (Grok) | ✓ | — | — | OpenAI-compatible. Grok models. |
 
 ### API Key Requirements
 
@@ -145,11 +162,49 @@ npm run start
 | Anthropic | **Admin** API key (`sk-ant-admin01-...`) | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) |
 | OpenRouter | **Management** API key (`sk-or-...`) | [openrouter.ai/keys](https://openrouter.ai/keys) |
 | NVIDIA NIM | API key (`nvapi-...`) | [build.nvidia.com](https://build.nvidia.com/) |
+| Google AI Studio | Gemini API key (`AIza...`) | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| Groq | API key (`gsk_...`) | [console.groq.com/keys](https://console.groq.com/keys) |
+| Mistral | API key | [console.mistral.ai/api-keys](https://console.mistral.ai/api-keys/) |
+| Together AI | API key | [api.together.ai/settings/api-keys](https://api.together.ai/settings/api-keys) |
+| DeepSeek | API key (`sk-...`) | [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys) |
+| Fireworks AI | API key | [fireworks.ai/account/api-keys](https://fireworks.ai/account/api-keys) |
+| Perplexity | API key (`pplx-...`) | [docs.perplexity.ai](https://docs.perplexity.ai/docs/getting-started/getting-started-chat) |
+| DeepInfra | API key | [deepinfra.com/dash/api_keys](https://deepinfra.com/dash/api_keys) |
+| Anyscale | API key | [app.endpoints.anyscale.com/credentials](https://app.endpoints.anyscale.com/credentials) |
+| xAI (Grok) | API key (`xai-...`) | [console.x.ai](https://console.x.ai) |
 
 > OpenAI, Anthropic, and OpenRouter require admin/management keys — standard API
 > keys cannot access usage/billing endpoints and will return **403 Forbidden**.
-> NVIDIA NIM accepts a standard API key for the models endpoint; no admin key
-> is needed because usage analytics are not exposed.
+> All other providers accept a standard API key for their models endpoint; no
+> admin key is needed because usage analytics are not exposed through their
+> public APIs.
+
+## Adding OpenAI-Compatible Providers
+
+ATM uses a single `OpenAICompatibleProvider` adapter
+([`providers/openai-compatible.ts`](providers/openai-compatible.ts)) for any
+provider that:
+
+- Exposes `GET ${baseUrl}/models` returning `{ data: [{ id, ... }] }`
+- Accepts `Authorization: Bearer <key>` (or `x-api-key` / `x-goog-api-key`)
+
+To add a new OpenAI-compatible provider:
+
+1. Add a template entry in [`templates/index.ts`](templates/index.ts) with
+   `type`, `displayName`, `baseUrl`, `authMethod`, and `supportsUsage: false`.
+2. Add the `type` string to `OPENAI_COMPATIBLE_TYPES` in
+   [`providers/index.ts`](providers/index.ts).
+3. Optionally add a badge color in `typeBadgeClass()` in
+   [`app/providers/page.tsx`](app/providers/page.tsx).
+
+No new adapter file is needed — the generic adapter handles fetchModels,
+fetchUsage (returns `[]`), and healthCheck automatically using the template's
+`baseUrl` and `authMethod`.
+
+For providers with a **public usage analytics endpoint** (like OpenAI's
+`/organization/usage/completions`), write a dedicated adapter in
+`providers/<name>.ts` implementing `fetchUsage()` and add a `case` to the
+factory in `providers/index.ts`.
 
 ## Usage
 

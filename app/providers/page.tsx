@@ -25,6 +25,26 @@ function typeBadgeClass(type: string): string {
       return "bg-blue-500/10 text-blue-500 border-blue-500/20"
     case "nvidia":
       return "bg-lime-500/10 text-lime-600 border-lime-500/20"
+    case "google":
+      return "bg-red-500/10 text-red-500 border-red-500/20"
+    case "groq":
+      return "bg-orange-500/10 text-orange-600 border-orange-500/20"
+    case "mistral":
+      return "bg-amber-500/10 text-amber-600 border-amber-500/20"
+    case "together":
+      return "bg-blue-500/10 text-blue-600 border-blue-500/20"
+    case "deepseek":
+      return "bg-violet-500/10 text-violet-500 border-violet-500/20"
+    case "fireworks":
+      return "bg-rose-500/10 text-rose-500 border-rose-500/20"
+    case "perplexity":
+      return "bg-teal-500/10 text-teal-500 border-teal-500/20"
+    case "deepinfra":
+      return "bg-cyan-500/10 text-cyan-500 border-cyan-500/20"
+    case "anyscale":
+      return "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
+    case "xai":
+      return "bg-zinc-500/10 text-zinc-300 border-zinc-500/20"
     default:
       return "bg-muted text-muted-foreground border-border"
   }
