@@ -282,6 +282,221 @@ export function getDashboardTotals(): {
   )
 }
 
+// --- Dashboard-specific aggregates (Phase 5) ---
+
+export type DailySeriesPoint = {
+  date: string
+  cost_usd: number
+  input_tokens: number
+  output_tokens: number
+  total_tokens: number
+  requests: number
+}
+
+export function getDailySeries(opts?: {
+  providerId?: string
+  startDate?: string
+  endDate?: string
+  limit?: number
+}): DailySeriesPoint[] {
+  const db = getDb()
+  const conditions: string[] = []
+  const params: (string | number)[] = []
+
+  if (opts?.providerId) {
+    conditions.push("provider_id = ?")
+    params.push(opts.providerId)
+  }
+  if (opts?.startDate) {
+    conditions.push("date >= ?")
+    params.push(opts.startDate)
+  }
+  if (opts?.endDate) {
+    conditions.push("date <= ?")
+    params.push(opts.endDate)
+  }
+
+  const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
+  const limit = opts?.limit ?? 365
+
+  return db
+    .prepare(
+      `SELECT
+         date,
+         COALESCE(SUM(total_cost_usd), 0) AS cost_usd,
+         COALESCE(SUM(total_input_tokens), 0) AS input_tokens,
+         COALESCE(SUM(total_output_tokens), 0) AS output_tokens,
+         COALESCE(SUM(total_input_tokens), 0) + COALESCE(SUM(total_output_tokens), 0) AS total_tokens,
+         COALESCE(SUM(total_requests), 0) AS requests
+       FROM usage_daily
+       ${where}
+       GROUP BY date
+       ORDER BY date ASC
+       LIMIT ?`
+    )
+    .all(...params, limit) as DailySeriesPoint[]
+}
+
+export type MonthlySeriesPoint = {
+  month: string
+  cost_usd: number
+  input_tokens: number
+  output_tokens: number
+  total_tokens: number
+  requests: number
+}
+
+export function getMonthlySeries(opts?: {
+  providerId?: string
+  limit?: number
+}): MonthlySeriesPoint[] {
+  const db = getDb()
+  const conditions: string[] = []
+  const params: (string | number)[] = []
+
+  if (opts?.providerId) {
+    conditions.push("provider_id = ?")
+    params.push(opts.providerId)
+  }
+
+  const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
+  const limit = opts?.limit ?? 12
+
+  return db
+    .prepare(
+      `SELECT
+         strftime('%Y-%m', date) AS month,
+         COALESCE(SUM(total_cost_usd), 0) AS cost_usd,
+         COALESCE(SUM(total_input_tokens), 0) AS input_tokens,
+         COALESCE(SUM(total_output_tokens), 0) AS output_tokens,
+         COALESCE(SUM(total_input_tokens), 0) + COALESCE(SUM(total_output_tokens), 0) AS total_tokens,
+         COALESCE(SUM(total_requests), 0) AS requests
+       FROM usage_daily
+       ${where}
+       GROUP BY month
+       ORDER BY month ASC
+       LIMIT ?`
+    )
+    .all(...params, limit) as MonthlySeriesPoint[]
+}
+
+export type ProviderBreakdownRow = {
+  provider_id: string
+  provider_name: string
+  total_cost_usd: number
+  total_input_tokens: number
+  total_output_tokens: number
+  total_requests: number
+  last_sync: number | null
+}
+
+export function getProviderBreakdown(): ProviderBreakdownRow[] {
+  const db = getDb()
+  return db
+    .prepare(
+      `SELECT
+         p.id AS provider_id,
+         p.name AS provider_name,
+         COALESCE(SUM(d.total_cost_usd), 0) AS total_cost_usd,
+         COALESCE(SUM(d.total_input_tokens), 0) AS total_input_tokens,
+         COALESCE(SUM(d.total_output_tokens), 0) AS total_output_tokens,
+         COALESCE(SUM(d.total_requests), 0) AS total_requests,
+         p.last_sync AS last_sync
+       FROM providers p
+       LEFT JOIN usage_daily d ON d.provider_id = p.id
+       GROUP BY p.id
+       ORDER BY total_cost_usd DESC`
+    )
+    .all() as ProviderBreakdownRow[]
+}
+
+export type ModelBreakdownRow = {
+  model_id: string
+  model_name: string
+  provider_name: string
+  total_cost_usd: number
+  total_input_tokens: number
+  total_output_tokens: number
+  total_requests: number
+}
+
+export function getModelBreakdown(limit = 20): ModelBreakdownRow[] {
+  const db = getDb()
+  return db
+    .prepare(
+      `SELECT
+         m.id AS model_id,
+         COALESCE(m.display_name, m.name) AS model_name,
+         p.name AS provider_name,
+         COALESCE(SUM(d.total_cost_usd), 0) AS total_cost_usd,
+         COALESCE(SUM(d.total_input_tokens), 0) AS total_input_tokens,
+         COALESCE(SUM(d.total_output_tokens), 0) AS total_output_tokens,
+         COALESCE(SUM(d.total_requests), 0) AS total_requests
+       FROM models m
+       LEFT JOIN usage_daily d ON d.model_id = m.id
+       LEFT JOIN providers p ON p.id = m.provider_id
+       GROUP BY m.id
+       ORDER BY total_cost_usd DESC
+       LIMIT ?`
+    )
+    .all(limit) as ModelBreakdownRow[]
+}
+
+export type RecentActivityRow = {
+  id: string
+  provider_name: string
+  model_name: string | null
+  timestamp: number
+  input_tokens: number
+  output_tokens: number
+  total_tokens: number
+  cost_usd: number
+  request_count: number
+}
+
+export function getRecentActivity(limit = 15): RecentActivityRow[] {
+  const db = getDb()
+  return db
+    .prepare(
+      `SELECT
+         u.id,
+         p.name AS provider_name,
+         COALESCE(m.display_name, m.name) AS model_name,
+         u.timestamp,
+         u.input_tokens,
+         u.output_tokens,
+         u.total_tokens,
+         u.cost_usd,
+         u.request_count
+       FROM usage_records u
+       LEFT JOIN providers p ON p.id = u.provider_id
+       LEFT JOIN models m ON m.id = u.model_id
+       ORDER BY u.timestamp DESC
+       LIMIT ?`
+    )
+    .all(limit) as RecentActivityRow[]
+}
+
+export function getActiveProvidersCount(): number {
+  const db = getDb()
+  const row = db
+    .prepare("SELECT COUNT(*) AS n FROM providers WHERE is_active = 1")
+    .get() as { n: number }
+  return row.n
+}
+
+export function getRequestsTodayCount(): number {
+  const db = getDb()
+  const today = new Date()
+  const todayStr = today.toISOString().slice(0, 10)
+  const row = db
+    .prepare(
+      "SELECT COALESCE(SUM(total_requests), 0) AS n FROM usage_daily WHERE date = ?"
+    )
+    .get(todayStr) as { n: number }
+  return row.n
+}
+
 export function getUsageRecords(limit = 100): UsageRecord[] {
   const db = getDb()
   return db

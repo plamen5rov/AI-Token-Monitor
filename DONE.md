@@ -36,6 +36,12 @@ Changelog for the AI Token Monitor (ATM) project.
 
 ---
 
+## Phase 5 — Dashboard & Analytics
+
+- [2026-07-05] Built analytics dashboard with live data: installed `recharts` (v3.9.2); added dashboard query helpers in `lib/db.ts` — `getDailySeries`, `getMonthlySeries`, `getProviderBreakdown`, `getModelBreakdown`, `getRecentActivity`, `getActiveProvidersCount`, `getRequestsTodayCount`; added `lib/format.ts` (currency, number, timestamp, relative-time formatters); created `components/dashboard/` directory with `MetricCard`, `CostTrendChart` (area chart with daily/monthly toggle), `TokenTrendChart` (stacked area, input vs output), `ProviderBreakdown`, `ModelBreakdown`, `RecentActivity` tables; rewrote `app/page.tsx` as a force-dynamic server component that fetches all data server-side and passes to chart/table components; charts use shadcn v4 oklch CSS variables (`var(--primary)` etc.) for theme-aware colors; all sections include empty-state messaging for fresh installs; verified all queries with `scripts/verify-dashboard.ts` (seeded 90 days × 3 models, confirmed totals, daily/monthly series, provider/model breakdowns, recent activity ordering); build passes clean (route `/` is dynamic `ƒ`). (files modified: app/page.tsx, lib/db.ts, DONE.md, package.json, package-lock.json; files added: lib/format.ts, components/dashboard/metric-card.tsx, components/dashboard/cost-trend-chart.tsx, components/dashboard/token-trend-chart.tsx, components/dashboard/provider-breakdown.tsx, components/dashboard/model-breakdown.tsx, components/dashboard/recent-activity.tsx, scripts/verify-dashboard.ts)
+
+---
+
 ## Process & Tooling
 
 - [2026-07-05] Created `ERROR-LOG.md` at project root and added error-logging principle to workflow rules; logged first entry about Dark Reader hydration mismatch; mirrored the principle into global OpenCode config at `~/.config/opencode/AGENTS.md` (files modified: ERROR-LOG.md, AGENTS.md, docs/agents/OPENODE_MASTER_PROMPT.md, docs/agents/OPENODE_BUILD_AGENT.md, ~/.config/opencode/AGENTS.md, DONE.md)
