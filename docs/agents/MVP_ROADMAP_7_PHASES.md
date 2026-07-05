@@ -48,7 +48,7 @@ major architectural changes.
 
 * Implement the SQLite connection layer
 * Create the database module
-* Implement the schema defined in `DATABASE_SCHEMA.md`
+* Implement the schema defined in `docs/architecture/DATABASE_SCHEMA.md`
 * Create a migration system using raw SQL
 * Create reusable database helper functions
 

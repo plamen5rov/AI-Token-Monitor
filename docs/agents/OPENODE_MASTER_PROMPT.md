@@ -80,10 +80,10 @@ No component may bypass this pipeline.
 You must strictly follow:
 
 * AGENTS.md (system rules)
-* DATABASE_SCHEMA.md (data model)
-* DATA_FLOW.md (runtime behavior)
-* UI_SYSTEM.md (design system)
-* UI_IMPLEMENTATION_PLAN.md (component plan)
+* docs/architecture/DATABASE_SCHEMA.md (data model)
+* docs/architecture/DATA_FLOW.md (runtime behavior)
+* docs/ui/UI_SYSTEM.md (design system)
+* docs/ui/UI_IMPLEMENTATION_PLAN.md (component plan)
 
 If any conflict exists:
 👉 AGENTS.md overrides all
@@ -181,7 +181,7 @@ OUTPUT:
 ## PHASE 2 — Database Layer
 
 * Implement SQLite connection
-* Implement full schema from DATABASE_SCHEMA.md
+* Implement full schema from docs/architecture/DATABASE_SCHEMA.md
 * Create migration system using raw SQL files
 
 OUTPUT:

@@ -112,6 +112,31 @@ Keep structure shallow and predictable.
 
 ---
 
+## Documentation Structure
+
+Supporting specs and agent instructions are organized under `docs/`:
+
+```text
+docs/
+├── agents/
+│   ├── OPENODE_MASTER_PROMPT.md      # Autonomous build prompt
+│   ├── OPENODE_BUILD_AGENT.md        # Build agent instructions
+│   └── MVP_ROADMAP_7_PHASES.md       # Implementation roadmap
+├── architecture/
+│   ├── DATABASE_SCHEMA.md            # SQLite schema
+│   ├── DATA_FLOW.md                  # Runtime data flow
+│   ├── PROVIDER_ADAPTER_GENERATOR.md # Adapter generation system
+│   └── SKILL.md                      # Provider API patterns
+└── ui/
+    ├── UI_SYSTEM.md                  # Design system
+    └── UI_IMPLEMENTATION_PLAN.md     # Component build plan
+```
+
+`AGENTS.md` is the source of truth and overrides any conflicting guidance in the
+supporting documents.
+
+---
+
 ## Provider System
 
 ATM is built around a **provider template system**.

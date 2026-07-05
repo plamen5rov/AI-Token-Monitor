@@ -92,7 +92,7 @@ SQLite (better-sqlite3)
 
 Agent MUST implement EXACT schema from:
 
-DATABASE_SCHEMA.md
+docs/architecture/DATABASE_SCHEMA.md
 
 Tables:
 
@@ -181,7 +181,7 @@ Tasks:
 
 * Implement SQLite connection layer
 * Create `/database` module
-* Implement schema from DATABASE_SCHEMA.md
+* Implement schema from docs/architecture/DATABASE_SCHEMA.md
 * Add migration scripts (manual SQL files)
 
 Output:
