@@ -3,7 +3,7 @@ export type ProviderTemplate = {
   displayName: string
   description: string
   baseUrl: string
-  authMethod: "bearer" | "x-api-key" | "x-goog-api-key"
+  authMethod: "bearer" | "x-api-key" | "x-goog-api-key" | "none"
   apiKeyPrefix: string
   apiKeyLabel: string
   apiKeyHelpUrl: string
@@ -205,6 +205,19 @@ export const PROVIDER_TEMPLATES: ProviderTemplate[] = [
     apiKeyHelpUrl: "https://opencode.ai/settings/keys",
     supportsModels: true,
     supportsUsage: false,
+  },
+  {
+    type: "opencode-local",
+    displayName: "OpenCode (Local CLI)",
+    description:
+      "Syncs usage from your local OpenCode CLI database (~/.local/share/opencode/opencode.db). No API key needed — reads the local SQLite file directly.",
+    baseUrl: "",
+    authMethod: "none",
+    apiKeyPrefix: "",
+    apiKeyLabel: "",
+    apiKeyHelpUrl: "",
+    supportsModels: true,
+    supportsUsage: true,
   },
 ]
 

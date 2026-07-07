@@ -47,6 +47,8 @@ function typeBadgeClass(type: string): string {
       return "bg-zinc-500/10 text-zinc-300 border-zinc-500/20"
     case "opencode":
       return "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20"
+    case "opencode-local":
+      return "bg-sky-500/10 text-sky-400 border-sky-500/20"
     default:
       return "bg-muted text-muted-foreground border-border"
   }

@@ -1,14 +1,20 @@
 import { getDb } from "@/database"
 import type {
+  Budget,
   Model,
+  NewBudget,
   NewModel,
   NewProvider,
+  NewRequestLog,
   NewSyncLog,
   NewUsageRecord,
+  NewVirtualKey,
   Provider,
+  RequestLog,
   Setting,
   SyncLog,
   UsageRecord,
+  VirtualKey,
 } from "@/types"
 
 function now() {
@@ -601,4 +607,239 @@ export function updateSyncLog(
      WHERE id = ?`
   ).run(next.status, next.finished_at, next.error_message, id)
   return next
+}
+
+// --- Request logs (gateway) ---
+
+export function createRequestLog(log: NewRequestLog): RequestLog {
+  const db = getDb()
+  const id = crypto.randomUUID()
+  db.prepare(
+    `INSERT INTO request_logs (id, provider, model, endpoint, method, status, input_tokens, output_tokens, cost_usd, latency_ms, virtual_key_id, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(
+    id,
+    log.provider,
+    log.model ?? null,
+    log.endpoint,
+    log.method,
+    log.status ?? null,
+    log.input_tokens,
+    log.output_tokens,
+    log.cost_usd,
+    log.latency_ms,
+    log.virtual_key_id ?? null,
+    log.created_at
+  )
+  return db.prepare("SELECT * FROM request_logs WHERE id = ?").get(id) as RequestLog
+}
+
+export function getRequestLogs(opts?: {
+  provider?: string
+  model?: string
+  limit?: number
+  offset?: number
+}): RequestLog[] {
+  const db = getDb()
+  const conditions: string[] = []
+  const params: (string | number)[] = []
+
+  if (opts?.provider) {
+    conditions.push("provider = ?")
+    params.push(opts.provider)
+  }
+  if (opts?.model) {
+    conditions.push("model = ?")
+    params.push(opts.model)
+  }
+
+  const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : ""
+  const limit = opts?.limit ?? 100
+  const offset = opts?.offset ?? 0
+
+  return db
+    .prepare(
+      `SELECT * FROM request_logs ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`
+    )
+    .all(...params, limit, offset) as RequestLog[]
+}
+
+export function getRequestLogStats(provider?: string): {
+  total_requests: number
+  total_cost_usd: number
+  total_input_tokens: number
+  total_output_tokens: number
+  avg_latency_ms: number
+} {
+  const db = getDb()
+  const where = provider ? "WHERE provider = ?" : ""
+  const params = provider ? [provider] : []
+  const row = db
+    .prepare(
+      `SELECT
+         COUNT(*) AS total_requests,
+         COALESCE(SUM(cost_usd), 0) AS total_cost_usd,
+         COALESCE(SUM(input_tokens), 0) AS total_input_tokens,
+         COALESCE(SUM(output_tokens), 0) AS total_output_tokens,
+         COALESCE(AVG(latency_ms), 0) AS avg_latency_ms
+       FROM request_logs ${where}`
+    )
+    .get(...params) as {
+    total_requests: number
+    total_cost_usd: number
+    total_input_tokens: number
+    total_output_tokens: number
+    avg_latency_ms: number
+  }
+  return row
+}
+
+// --- Virtual keys (gateway auth) ---
+
+export function createVirtualKey(vk: NewVirtualKey): VirtualKey {
+  const db = getDb()
+  const id = crypto.randomUUID()
+  db.prepare(
+    `INSERT INTO virtual_keys (id, name, key_hash, provider, is_active, budget_usd, budget_used_usd, created_at, last_used_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(
+    id,
+    vk.name,
+    vk.key_hash,
+    vk.provider,
+    vk.is_active,
+    vk.budget_usd ?? null,
+    vk.budget_used_usd,
+    vk.created_at,
+    vk.last_used_at ?? null
+  )
+  return db.prepare("SELECT * FROM virtual_keys WHERE id = ?").get(id) as VirtualKey
+}
+
+export function getVirtualKeys(): VirtualKey[] {
+  const db = getDb()
+  return db.prepare("SELECT * FROM virtual_keys ORDER BY created_at DESC").all() as VirtualKey[]
+}
+
+export function getVirtualKeyByHash(hash: string): VirtualKey | undefined {
+  const db = getDb()
+  return db
+    .prepare("SELECT * FROM virtual_keys WHERE key_hash = ? AND is_active = 1")
+    .get(hash) as VirtualKey | undefined
+}
+
+export function updateVirtualKey(id: string, updates: Partial<NewVirtualKey>): VirtualKey | undefined {
+  const db = getDb()
+  const existing = db.prepare("SELECT * FROM virtual_keys WHERE id = ?").get(id) as VirtualKey | undefined
+  if (!existing) return undefined
+
+  const next = { ...existing, ...updates }
+  db.prepare(
+    `UPDATE virtual_keys SET name = ?, provider = ?, is_active = ?, budget_usd = ?, budget_used_usd = ?, last_used_at = ? WHERE id = ?`
+  ).run(next.name, next.provider, next.is_active, next.budget_usd, next.budget_used_usd, next.last_used_at, id)
+  return next
+}
+
+export function deleteVirtualKey(id: string): boolean {
+  const db = getDb()
+  const result = db.prepare("DELETE FROM virtual_keys WHERE id = ?").run(id)
+  return result.changes > 0
+}
+
+// --- Budgets ---
+
+export function createBudget(budget: NewBudget): Budget {
+  const db = getDb()
+  const id = crypto.randomUUID()
+  db.prepare(
+    `INSERT INTO budgets (id, scope, scope_id, limit_usd, period, used_usd, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).run(id, budget.scope, budget.scope_id ?? null, budget.limit_usd, budget.period, budget.used_usd, budget.created_at)
+  return db.prepare("SELECT * FROM budgets WHERE id = ?").get(id) as Budget
+}
+
+export function getBudgets(): Budget[] {
+  const db = getDb()
+  return db.prepare("SELECT * FROM budgets ORDER BY created_at DESC").all() as Budget[]
+}
+
+export function getActiveBudgets(): Budget[] {
+  const db = getDb()
+  return db.prepare("SELECT * FROM budgets WHERE used_usd < limit_usd").all() as Budget[]
+}
+
+export function updateBudget(id: string, updates: Partial<NewBudget>): Budget | undefined {
+  const db = getDb()
+  const existing = db.prepare("SELECT * FROM budgets WHERE id = ?").get(id) as Budget | undefined
+  if (!existing) return undefined
+
+  const next = { ...existing, ...updates }
+  db.prepare(
+    `UPDATE budgets SET scope = ?, scope_id = ?, limit_usd = ?, period = ?, used_usd = ? WHERE id = ?`
+  ).run(next.scope, next.scope_id, next.limit_usd, next.period, next.used_usd, id)
+  return next
+}
+
+export function deleteBudget(id: string): boolean {
+  const db = getDb()
+  const result = db.prepare("DELETE FROM budgets WHERE id = ?").run(id)
+  return result.changes > 0
+}
+
+export function incrementBudgetUsage(id: string, amount: number): void {
+  const db = getDb()
+  db.prepare("UPDATE budgets SET used_usd = used_usd + ? WHERE id = ?").run(amount, id)
+}
+
+export function checkBudgetAllowed(provider: string, model: string | null): boolean {
+  const db = getDb()
+  // Check provider-level budget
+  const providerBudget = db
+    .prepare("SELECT * FROM budgets WHERE scope = 'provider' AND scope_id = ? AND used_usd < limit_usd")
+    .get(provider) as Budget | undefined
+  if (providerBudget) return true
+
+  // Check global budget
+  const globalBudget = db
+    .prepare("SELECT * FROM budgets WHERE scope = 'global' AND scope_id IS NULL AND used_usd < limit_usd")
+    .get() as Budget | undefined
+  if (globalBudget) return true
+
+  // Check model-level budget
+  if (model) {
+    const modelBudget = db
+      .prepare("SELECT * FROM budgets WHERE scope = 'model' AND scope_id = ? AND used_usd < limit_usd")
+      .get(model) as Budget | undefined
+    if (modelBudget) return true
+  }
+
+  // No budget = no limit (allow)
+  return true
+}
+
+// --- Dashboard gateway stats ---
+
+export type GatewayDailyPoint = {
+  date: string
+  requests: number
+  cost_usd: number
+  avg_latency_ms: number
+}
+
+export function getGatewayDailySeries(opts?: { limit?: number }): GatewayDailyPoint[] {
+  const db = getDb()
+  const limit = opts?.limit ?? 30
+  return db
+    .prepare(
+      `SELECT
+         date(created_at / 1000, 'unixepoch') AS date,
+         COUNT(*) AS requests,
+         COALESCE(SUM(cost_usd), 0) AS cost_usd,
+         COALESCE(AVG(latency_ms), 0) AS avg_latency_ms
+       FROM request_logs
+       GROUP BY date
+       ORDER BY date DESC
+       LIMIT ?`
+    )
+    .all(limit) as GatewayDailyPoint[]
 }

@@ -116,7 +116,7 @@ Next.js App Router
     ↓
 Server Actions / Route Handlers
     ↓
-Provider Adapters
+Provider Adapters / Gateway Proxy
     ↓
 SQLite (better-sqlite3)
 ```
@@ -129,11 +129,31 @@ No external API layer.
 
 ---
 
+## Gateway Architecture
+
+The gateway is a transparent HTTP proxy built into the Next.js app:
+
+```text
+Your App → ATM Gateway (localhost:3000/api/gateway/[provider]/...) → Provider API
+              ↓
+         request_logs table
+         virtual_keys auth
+         budget enforcement
+```
+
+Point your app's base URL at the gateway to get real-time request logging,
+virtual key auth, and budget limits — without changing any provider SDK code.
+
+---
+
 ## Project Structure
 
 ```text
 app/
+  api/gateway/[provider]/[...path]/  # Gateway proxy route
+  gateway/                            # Gateway dashboard
 components/
+  gateway/                            # Virtual key, budget, request log UI
 lib/
 providers/
 templates/

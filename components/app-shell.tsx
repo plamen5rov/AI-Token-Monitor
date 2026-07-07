@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { BarChart3, Cpu, LayoutDashboard, RefreshCw, Server, Settings } from "lucide-react"
+import { BarChart3, Cpu, LayoutDashboard, Network, RefreshCw, Server, Settings } from "lucide-react"
 
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SyncAllButton } from "@/components/sync-button"
@@ -11,6 +11,7 @@ const navItems = [
   { label: "Providers", href: "/providers", icon: Server },
   { label: "Models", href: "/models", icon: Cpu },
   { label: "Usage", href: "/usage", icon: BarChart3 },
+  { label: "Gateway", href: "/gateway", icon: Network },
   { label: "Sync", href: "/sync", icon: RefreshCw },
   { label: "Settings", href: "/settings", icon: Settings },
 ]

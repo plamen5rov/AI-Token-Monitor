@@ -39,14 +39,14 @@ export async function addProviderAction(
   }
 
   const trimmedKey = sanitizeApiKey(apiKey)
-  if (!trimmedKey) {
+  if (type !== "opencode-local" && !trimmedKey) {
     return { success: false, message: "API key is required." }
   }
 
   const provider = createProvider({
     name: trimmedName,
     type,
-    api_key_encrypted: encrypt(trimmedKey),
+    api_key_encrypted: trimmedKey ? encrypt(trimmedKey) : "",
     is_active: 1,
     created_at: Date.now(),
     last_sync: null,

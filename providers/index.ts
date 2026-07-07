@@ -4,6 +4,7 @@ import { AnthropicProvider } from "./anthropic"
 import { OpenRouterProvider } from "./openrouter"
 import { GoogleProvider } from "./google"
 import { OpenAICompatibleProvider } from "./openai-compatible"
+import { OpenCodeLocalProvider } from "./opencode-local"
 import type { Provider } from "@/types"
 
 // Provider types that use the generic OpenAI-compatible adapter.
@@ -33,6 +34,8 @@ export function createAdapter(provider: Provider): BaseProvider {
       return new OpenRouterProvider(provider)
     case "google":
       return new GoogleProvider(provider)
+    case "opencode-local":
+      return new OpenCodeLocalProvider(provider)
     default:
       if (OPENAI_COMPATIBLE_TYPES.has(provider.type)) {
         return new OpenAICompatibleProvider(provider)

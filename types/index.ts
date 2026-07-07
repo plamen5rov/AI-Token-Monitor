@@ -74,3 +74,48 @@ export type Setting = {
   key: string
   value: string
 }
+
+// --- Gateway types ---
+
+export type RequestLog = {
+  id: string
+  provider: string
+  model: string | null
+  endpoint: string
+  method: string
+  status: number | null
+  input_tokens: number
+  output_tokens: number
+  cost_usd: number
+  latency_ms: number
+  virtual_key_id: string | null
+  created_at: number
+}
+
+export type NewRequestLog = Omit<RequestLog, "id">
+
+export type VirtualKey = {
+  id: string
+  name: string
+  key_hash: string
+  provider: string
+  is_active: number
+  budget_usd: number | null
+  budget_used_usd: number
+  created_at: number
+  last_used_at: number | null
+}
+
+export type NewVirtualKey = Omit<VirtualKey, "id">
+
+export type Budget = {
+  id: string
+  scope: string
+  scope_id: string | null
+  limit_usd: number
+  period: string
+  used_usd: number
+  created_at: number
+}
+
+export type NewBudget = Omit<Budget, "id">

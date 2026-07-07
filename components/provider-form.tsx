@@ -44,7 +44,7 @@ export function ProviderForm({ templates }: { templates: TemplateInfo[] }) {
       toast.error("Provider name is required.")
       return
     }
-    if (!apiKey.trim()) {
+    if (type !== "opencode-local" && !apiKey.trim()) {
       toast.error("API key is required.")
       return
     }
@@ -117,35 +117,37 @@ export function ProviderForm({ templates }: { templates: TemplateInfo[] }) {
           />
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium" htmlFor="provider-apikey">
-              {selected?.apiKeyLabel ?? "API Key"}
-            </label>
-            {selected?.apiKeyHelpUrl && (
-              <a
-                href={selected.apiKeyHelpUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-primary hover:underline"
-              >
-                Get key →
-              </a>
-            )}
+        {type !== "opencode-local" && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium" htmlFor="provider-apikey">
+                {selected?.apiKeyLabel ?? "API Key"}
+              </label>
+              {selected?.apiKeyHelpUrl && (
+                <a
+                  href={selected.apiKeyHelpUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary hover:underline"
+                >
+                  Get key →
+                </a>
+              )}
+            </div>
+            <input
+              id="provider-apikey"
+              type="password"
+              autoComplete="off"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder={selected?.apiKeyPrefix ?? "sk-..."}
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm font-mono outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
+            />
+            <p className="text-xs text-muted-foreground">
+              Stored encrypted in the local database. Never sent to the browser.
+            </p>
           </div>
-          <input
-            id="provider-apikey"
-            type="password"
-            autoComplete="off"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder={selected?.apiKeyPrefix ?? "sk-..."}
-            className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm font-mono outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
-          />
-          <p className="text-xs text-muted-foreground">
-            Stored encrypted in the local database. Never sent to the browser.
-          </p>
-        </div>
+        )}
 
         <div className="flex items-center gap-3">
           <Button type="submit" variant="default" size="sm" disabled={isPending}>
