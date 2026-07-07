@@ -34,7 +34,7 @@ export async function syncProviderAction(providerId: string): Promise<{ result: 
   return {
     result,
     message: result.status === "success"
-      ? `Synced ${result.modelsSynced} models, ${result.recordsSynced} records.`
+      ? `Synced ${result.modelsSynced} models, ${result.recordsSynced} records.${result.notes ? " " + result.notes.join(" ") : ""}`
       : `Sync failed: ${result.error}`,
   }
 }

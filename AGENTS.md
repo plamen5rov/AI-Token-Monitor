@@ -192,14 +192,14 @@ A template defines:
 Example:
 
 ```text
-templates/index.ts   # all 14 templates defined in one file
+templates/index.ts   # all 15 templates defined in one file
 ```
 
 The current templates: openai, anthropic, openrouter (full usage
 tracking), nvidia, google, groq, mistral, together, deepseek, fireworks,
-perplexity, deepinfra, anyscale, xai (model registry only). OpenAI-compatible
-providers share a single `OpenAICompatibleProvider` adapter and only need
-a template entry to add — see `providers/openai-compatible.ts`.
+perplexity, deepinfra, anyscale, xai, opencode (model registry only).
+OpenAI-compatible providers share a single `OpenAICompatibleProvider` adapter
+and only need a template entry to add — see `providers/openai-compatible.ts`.
 
 ---
 
@@ -220,12 +220,17 @@ providers/
 ```
 
 OpenAI-compatible providers (nvidia, groq, mistral, together, deepseek,
-fireworks, perplexity, deepinfra, anyscale, xai) share a single
+fireworks, perplexity, deepinfra, anyscale, xai, opencode) share a single
 `OpenAICompatibleProvider` adapter in `providers/openai-compatible.ts` and
 only need a template entry to add. Providers with public usage endpoints
 (openai, anthropic, openrouter) have dedicated adapters. Google has a
 custom adapter (`providers/google.ts`) due to its non-OpenAI model list
 response format.
+
+OpenAI uses both official Admin APIs: `/organization/usage/completions` for
+token/request buckets and `/organization/costs` for exact daily spend. The
+Costs API is the source of truth for OpenAI dollars; token rows are stored with
+zero estimated cost to avoid double-counting.
 
 Example:
 
@@ -246,6 +251,10 @@ ATM must support:
 * cost per model
 * token breakdown (input/output)
 * historical trends
+
+Some provider APIs expose exact provider-level costs without model-level cost
+attribution. In that case, preserve exact provider-level spend rather than
+dropping it or replacing it with guessed model-level cost.
 
 Each provider adapter must map provider-specific model data into a unified
 schema.

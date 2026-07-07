@@ -83,6 +83,9 @@ export class OpenAICompatibleProvider extends BaseProvider {
   }
 
   async fetchUsage(): Promise<NormalizedUsageRecord[]> {
+    this.lastSyncNotes.push(
+      `${this.displayName} has no public usage API. To track usage automatically, route requests through the ATM gateway.`
+    )
     return []
   }
 

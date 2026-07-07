@@ -26,7 +26,7 @@ No UI component is allowed to bypass this flow.
 
 Each provider (OpenAI, Anthropic, OpenRouter, NVIDIA NIM, Google AI Studio,
 Groq, Mistral, Together AI, DeepSeek, Fireworks AI, Perplexity, DeepInfra,
-Anyscale, xAI, etc.) exposes different:
+Anyscale, xAI, OpenCode Zen, etc.) exposes different:
 
 * authentication methods
 * endpoints
@@ -118,6 +118,12 @@ If provider does NOT return cost:
 cost = (input_tokens / 1000 * input_price) +
        (output_tokens / 1000 * output_price)
 ```
+
+If a provider returns exact cost separately from token usage, prefer exact cost.
+For OpenAI, `/organization/usage/completions` provides token/request buckets and
+`/organization/costs` provides exact daily spend. ATM stores OpenAI token rows
+with zero estimated cost and adds separate exact cost rows to avoid
+double-counting.
 
 ---
 

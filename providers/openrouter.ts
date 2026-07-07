@@ -108,6 +108,12 @@ export class OpenRouterProvider extends BaseProvider {
       })
     }
 
+    if (records.length === 0) {
+      this.lastSyncNotes.push(
+        "No usage records returned. OpenRouter /activity shows the last 30 completed UTC days — today's usage may not appear until tomorrow. Also ensure you are using a Management API key (not a regular API key) at https://openrouter.ai/keys."
+      )
+    }
+
     return records
   }
 

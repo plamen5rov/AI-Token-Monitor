@@ -229,11 +229,12 @@ OUTPUT:
 
 * Implement base adapter
 * Implement OpenAI provider
-* Normalize OpenAI usage data
+* Normalize OpenAI token usage data
+* Pull exact OpenAI daily spend from `/organization/costs`
 
 OUTPUT:
 
-* OpenAI usage stored in SQLite
+* OpenAI token usage and exact provider-level cost stored in SQLite
 
 ---
 

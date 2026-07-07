@@ -19,6 +19,7 @@ export type SyncResult = {
   modelsSynced: number
   recordsSynced: number
   error?: string
+  notes?: string[]
 }
 
 export async function syncProvider(provider: Provider): Promise<SyncResult> {
@@ -36,11 +37,14 @@ export async function syncProvider(provider: Provider): Promise<SyncResult> {
     updateProvider(provider.id, { last_sync: Date.now() })
     finishLog(logId, "success")
 
+    const notes = adapter.lastSyncNotes.length > 0 ? adapter.lastSyncNotes : undefined
+
     return {
       providerId: provider.id,
       status: "success",
       modelsSynced,
       recordsSynced,
+      notes,
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
@@ -86,8 +90,18 @@ async function syncUsage(adapter: BaseProvider, providerId: string): Promise<num
   for (const record of records) {
     if (!Number.isFinite(record.timestamp)) continue
 
-    const model = getModelByName(providerId, record.modelId)
-    if (!model) continue
+    let model = getModelByName(providerId, record.modelId)
+    if (!model) {
+      model = createModel({
+        provider_id: providerId,
+        name: record.modelId,
+        display_name: record.modelId,
+        input_price_per_1k: 0,
+        output_price_per_1k: 0,
+        context_window: 0,
+        is_active: 1,
+      })
+    }
 
     const cost = record.costUSD || computeCost(record, model)
     createUsageRecord({

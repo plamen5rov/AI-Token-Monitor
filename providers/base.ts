@@ -16,6 +16,7 @@ export abstract class BaseProvider implements ProviderAdapter {
   name: string
   type: string
   protected apiKey: string
+  lastSyncNotes: string[] = []
 
   constructor(provider: Provider) {
     this.id = provider.id

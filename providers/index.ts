@@ -20,6 +20,7 @@ const OPENAI_COMPATIBLE_TYPES = new Set([
   "deepinfra",
   "anyscale",
   "xai",
+  "opencode",
 ])
 
 export function createAdapter(provider: Provider): BaseProvider {

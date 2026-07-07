@@ -71,6 +71,9 @@ export class GoogleProvider extends BaseProvider {
     // (requires GCP authentication, not the Gemini API key).
     // Returning an empty array keeps the sync pipeline working as a no-op for
     // this provider type while still keeping the model registry up to date.
+    this.lastSyncNotes.push(
+      "Google AI Studio has no public usage API. View usage at https://aistudio.google.com/usage. To track usage automatically, route requests through the ATM gateway."
+    )
     return []
   }
 

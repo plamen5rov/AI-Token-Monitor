@@ -10,10 +10,11 @@ across multiple AI API providers.
 
 ATM gives you a single pane of glass to monitor how much you're spending on
 OpenAI, Anthropic, and OpenRouter — with per-model cost breakdowns, token usage
-trends, and sync history. Eleven additional providers (NVIDIA NIM, Google AI
+trends, and sync history. Twelve additional providers (NVIDIA NIM, Google AI
 Studio, Groq, Mistral, Together AI, DeepSeek, Fireworks AI, Perplexity,
-DeepInfra, Anyscale, xAI) are supported as model-registry-only — they don't
-expose public REST usage analytics, but ATM keeps their model lists in sync.
+DeepInfra, Anyscale, xAI, OpenCode Zen) are supported as model-registry-only —
+they don't expose public REST usage analytics, but ATM keeps their model lists
+in sync.
 All data is stored locally in SQLite; API keys are encrypted at rest and never
 sent to the browser.
 
@@ -23,10 +24,10 @@ sent to the browser.
 
 ## Features
 
-- **Multi-provider support** — 14 pre-defined provider templates: OpenAI,
+- **Multi-provider support** — 15 pre-defined provider templates: OpenAI,
   Anthropic, OpenRouter (full usage tracking), NVIDIA NIM, Google AI Studio,
   Groq, Mistral, Together AI, DeepSeek, Fireworks AI, Perplexity, DeepInfra,
-  Anyscale, and xAI (model registry only). See
+  Anyscale, xAI, and OpenCode Zen (model registry only). See
   [Provider Support](#provider-support) for the full matrix and
   [Adding OpenAI-Compatible Providers](#adding-openai-compatible-providers) for
   how to add more.
@@ -131,7 +132,7 @@ npm run start
 
 1. Navigate to **Providers** in the sidebar.
 2. Click **Add Provider**.
-3. Select a provider type from the dropdown (14 providers available — see
+3. Select a provider type from the dropdown (15 providers available — see
    [Provider Support](#provider-support) below).
 4. Enter a display name and your API key.
 5. Click **Add Provider**.
@@ -140,7 +141,7 @@ npm run start
 
 | Provider | Models | Usage | Cost | Notes |
 |----------|:------:|:-----:|:----:|-------|
-| OpenAI | ✓ | ✓ | ✓ | Requires Admin key (`sk-admin-...`) |
+| OpenAI | ✓ | ✓ | ✓ | Requires Admin key (`sk-admin-...`). Pulls token usage from `/organization/usage/completions` and exact daily spend from `/organization/costs`. |
 | Anthropic | ✓ | ✓ | ✓ | Requires Admin key (`sk-ant-admin01-...`) |
 | OpenRouter | ✓ | ✓ | ✓ | Requires Management key (`sk-or-...`) |
 | NVIDIA NIM | ✓ | — | — | OpenAI-compatible. Sync refreshes the model list only. |
@@ -154,6 +155,7 @@ npm run start
 | DeepInfra | ✓ | — | — | OpenAI-compatible. Open-source models. |
 | Anyscale | ✓ | — | — | OpenAI-compatible. Llama, Mistral, etc. |
 | xAI (Grok) | ✓ | — | — | OpenAI-compatible. Grok models. |
+| OpenCode Zen | ✓ | — | — | OpenAI-compatible. Curated, verified GPT, Claude, Gemini, DeepSeek, MiniMax, GLM, Kimi models via opencode.ai/zen. |
 
 ### API Key Requirements
 
@@ -173,6 +175,7 @@ npm run start
 | DeepInfra | API key | [deepinfra.com/dash/api_keys](https://deepinfra.com/dash/api_keys) |
 | Anyscale | API key | [app.endpoints.anyscale.com/credentials](https://app.endpoints.anyscale.com/credentials) |
 | xAI (Grok) | API key (`xai-...`) | [console.x.ai](https://console.x.ai) |
+| OpenCode Zen | API key | [opencode.ai/settings/keys](https://opencode.ai/settings/keys) |
 
 > OpenAI, Anthropic, and OpenRouter require admin/management keys — standard API
 > keys cannot access usage/billing endpoints and will return **403 Forbidden**.
@@ -203,7 +206,7 @@ fetchUsage (returns `[]`), and healthCheck automatically using the template's
 `baseUrl` and `authMethod`.
 
 For providers with a **public usage analytics endpoint** (like OpenAI's
-`/organization/usage/completions`), write a dedicated adapter in
+`/organization/usage/completions` and `/organization/costs`), write a dedicated adapter in
 `providers/<name>.ts` implementing `fetchUsage()` and add a `case` to the
 factory in `providers/index.ts`.
 

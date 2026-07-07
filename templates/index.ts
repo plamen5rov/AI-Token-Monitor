@@ -15,7 +15,7 @@ export const PROVIDER_TEMPLATES: ProviderTemplate[] = [
   {
     type: "openai",
     displayName: "OpenAI",
-    description: "GPT models via the OpenAI API. Usage endpoint requires an Admin API key (sk-admin-...), not a standard project key.",
+    description: "GPT models via the OpenAI API. Usage and costs endpoints require an Admin API key (sk-admin-...), not a standard project key.",
     baseUrl: "https://api.openai.com/v1",
     authMethod: "bearer",
     apiKeyPrefix: "sk-admin-",
@@ -190,6 +190,19 @@ export const PROVIDER_TEMPLATES: ProviderTemplate[] = [
     apiKeyPrefix: "xai-",
     apiKeyLabel: "API Key",
     apiKeyHelpUrl: "https://console.x.ai",
+    supportsModels: true,
+    supportsUsage: false,
+  },
+  {
+    type: "opencode",
+    displayName: "OpenCode Zen",
+    description:
+      "Curated, verified models (GPT, Claude, Gemini, DeepSeek, MiniMax, GLM, Kimi, and more) via the OpenCode Zen gateway. OpenAI-compatible API; no public usage endpoint — usage is surfaced in opencode.ai/settings/usage.",
+    baseUrl: "https://opencode.ai/zen/v1",
+    authMethod: "bearer",
+    apiKeyPrefix: "",
+    apiKeyLabel: "Zen API Key",
+    apiKeyHelpUrl: "https://opencode.ai/settings/keys",
     supportsModels: true,
     supportsUsage: false,
   },
